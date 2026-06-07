@@ -150,7 +150,7 @@ jobs:
           CHROOT_DIR=$(mktemp -d)
           sudo mount -o loop /tmp/ubuntu-base.iso "$MOUNT_DIR"
           # Extract squashfs
-          sudo unsquashfs -d "$CHROOT_DIR" "$MOUNT_DIR/casper/filesystem.squashfs"
+          sudo unsquashfs -f -d "$CHROOT_DIR" "$MOUNT_DIR/casper/filesystem.squashfs"
           sudo umount "$MOUNT_DIR"
 
           # Copy assets into chroot
