@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './Settings.css';
-import { invoke } from '@tauri-apps/api/tauri';
+import { invoke } from '@tauri-apps/api/core';
 
 const ACCENT_COLORS = [
   { key: 'axiora-blue',   hex: '#007AFF', label: 'Axiora Blue' },
