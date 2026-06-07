@@ -1,0 +1,11 @@
+# Axiora OS Plymouth Boot Splash Theme
+# Place this directory at /usr/share/plymouth/themes/axiora/
+
+[Plymouth Theme]
+Name=Axiora OS
+Description=Clean, minimal boot animation for Axiora OS
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/axiora
+ScriptFile=/usr/share/plymouth/themes/axiora/axiora.script

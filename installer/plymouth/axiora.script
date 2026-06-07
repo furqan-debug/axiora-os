@@ -1,0 +1,83 @@
+// axiora.script — Plymouth boot animation for Axiora OS
+// ──────────────────────────────────────────────────────────────────────────────
+// This uses Plymouth's Script plugin to render a smooth, modern boot animation:
+//   1. Full-screen dark background (#0A0A0F)
+//   2. Axiora logo centred on screen, fading in
+//   3. Three pulsing dots underneath (progress indicator)
+//   4. A thin accent-blue progress bar at the very bottom
+// ──────────────────────────────────────────────────────────────────────────────
+
+// ── Background ────────────────────────────────────────────────────────────────
+Window.SetBackgroundTopColor(0.039, 0.039, 0.059);   // #0A0A0F top
+Window.SetBackgroundBottomColor(0.039, 0.039, 0.059); // solid
+
+// ── Logo ──────────────────────────────────────────────────────────────────────
+logo_image = Image("axiora-logo.png");
+logo       = Sprite(logo_image);
+logo.SetX(Window.GetWidth()  / 2 - logo_image.GetWidth()  / 2);
+logo.SetY(Window.GetHeight() / 2 - logo_image.GetHeight() / 2 - 40);
+logo.SetOpacity(0);
+
+// ── Progress dots ─────────────────────────────────────────────────────────────
+NUM_DOTS   = 3;
+DOT_SIZE   = 8;
+DOT_GAP    = 16;
+dot_sprites = [];
+total_width = NUM_DOTS * DOT_SIZE + (NUM_DOTS - 1) * DOT_GAP;
+start_x     = Window.GetWidth() / 2 - total_width / 2;
+dot_y       = Window.GetHeight() / 2 + logo_image.GetHeight() / 2 + 20;
+
+for (i = 0; i < NUM_DOTS; i++) {
+    dot_img  = Image.scale(Image("dot.png"), DOT_SIZE, DOT_SIZE);
+    dot      = Sprite(dot_img);
+    dot.SetX(start_x + i * (DOT_SIZE + DOT_GAP));
+    dot.SetY(dot_y);
+    dot.SetOpacity(0.2);
+    dot_sprites[i] = dot;
+}
+
+// ── Accent progress bar ───────────────────────────────────────────────────────
+BAR_HEIGHT = 3;
+bar_bg_img  = Image.scale(Image.FromSolidColor(0.18, 0.18, 0.22, 1.0), Window.GetWidth(), BAR_HEIGHT);
+bar_bg      = Sprite(bar_bg_img);
+bar_bg.SetY(Window.GetHeight() - BAR_HEIGHT);
+
+bar_img  = Image.scale(Image.FromSolidColor(0.0, 0.478, 1.0, 1.0), 1, BAR_HEIGHT);
+bar      = Sprite(bar_img);
+bar.SetY(Window.GetHeight() - BAR_HEIGHT);
+
+// ── State ─────────────────────────────────────────────────────────────────────
+progress    = 0;
+tick        = 0;
+FADE_SPEED  = 0.03;
+logo_faded  = 0;
+
+// ── Refresh callback (runs every ~16ms) ───────────────────────────────────────
+fun refresh_callback() {
+    tick++;
+
+    // Fade in logo
+    if (logo_faded < 1.0) {
+        logo_faded = Math.Min(logo_faded + FADE_SPEED, 1.0);
+        logo.SetOpacity(logo_faded);
+    }
+
+    // Animate dots – each pulses with a 120-tick offset
+    for (i = 0; i < NUM_DOTS; i++) {
+        phase = (tick + i * 12) % 36;
+        opacity = 0.2 + 0.8 * (phase < 18 ? phase / 18.0 : (36 - phase) / 18.0);
+        dot_sprites[i].SetOpacity(opacity);
+    }
+
+    // Grow the progress bar
+    bar_width = Math.Max(1, progress * Window.GetWidth());
+    bar.SetImage(Image.scale(Image.FromSolidColor(0.0, 0.478, 1.0, 1.0), bar_width, BAR_HEIGHT));
+}
+
+// ── Boot progress callback ────────────────────────────────────────────────────
+fun progress_callback(duration, progress_pct) {
+    progress = progress_pct;
+}
+
+Plymouth.SetRefreshFunction(refresh_callback);
+Plymouth.SetBootProgressFunction(progress_callback);

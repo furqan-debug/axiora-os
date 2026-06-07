@@ -1,51 +1,249 @@
-name: Build Axiora OS ISO
+name: Axiora OS – Build & Release
 
 on:
   push:
-    branches: [ master, main ]
+    branches: [master, dev]
+    tags:    ['v*']
   pull_request:
-    branches: [ master, main ]
-  schedule:
-    # Weekly builds on Sunday at midnight for Dev Channel
-    - cron: '0 0 * * 0'
+    branches: [master]
+  workflow_dispatch:
+    inputs:
+      channel:
+        description: 'Release channel (dev | stable)'
+        required: true
+        default: 'dev'
+
+env:
+  AXIORA_VERSION: "0.1.0"
+  AXIORA_CODENAME: "Vega"
 
 jobs:
-  build-iso:
+  # ── 1. Lint & type-check the React shell ─────────────────────────────────
+  shell-lint:
+    name: Shell — Lint & Type-check
     runs-on: ubuntu-22.04
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
-      - name: Install build dependencies
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: shell/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+        working-directory: shell
+
+      - name: TypeScript type-check
+        run: npx tsc --noEmit
+        working-directory: shell
+
+  # ── 2. Build Rust daemons ────────────────────────────────────────────────
+  build-daemons:
+    name: Rust Daemons — Build
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install system dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y build-essential curl wget xorriso squashfs-tools mtools
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq \
+            libdbus-1-dev pkg-config
 
-      - name: Setup Ubuntu Base
+      - name: Cache Cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            services/target
+          key: ${{ runner.os }}-cargo-${{ hashFiles('services/**/Cargo.lock') }}
+          restore-keys: ${{ runner.os }}-cargo-
+
+      - name: Build release binaries
+        run: cargo build --release
+        working-directory: services
+
+      - name: Upload daemon artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: axiora-daemons
+          path: |
+            services/target/release/dock_daemon
+            services/target/release/notification_daemon
+            services/target/release/focus_mode
+
+  # ── 3. Build .deb package ────────────────────────────────────────────────
+  build-deb:
+    name: Build .deb Package
+    runs-on: ubuntu-22.04
+    needs: build-daemons
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download daemon binaries
+        uses: actions/download-artifact@v4
+        with:
+          name: axiora-daemons
+          path: services/target/release/
+
+      - name: Make binaries executable
+        run: chmod +x services/target/release/*
+
+      - name: Install dpkg tools
+        run: sudo apt-get install -y dpkg-dev
+
+      - name: Build .deb
+        run: bash packaging/deb/build-deb.sh
+
+      - name: Upload .deb artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: axiora-shell-services-deb
+          path: packaging/deb/axiora-shell-services_${{ env.AXIORA_VERSION }}_amd64.deb
+
+  # ── 4. Build ISO with Cubic (headless via xvfb) ──────────────────────────
+  build-iso:
+    name: Build ISO
+    runs-on: ubuntu-22.04
+    needs: build-deb
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download .deb package
+        uses: actions/download-artifact@v4
+        with:
+          name: axiora-shell-services-deb
+          path: /tmp/
+
+      - name: Install Cubic and build tools
         run: |
-          chmod +x ./infra/setup_ubuntu.sh
-          # Note: actual ISO build step requires docker or cubic setup in CI
-          # ./infra/setup_ubuntu.sh
+          sudo apt-add-repository -y ppa:cubic-wizard/release
+          sudo apt-get update -qq
+          sudo apt-get install -y cubic squashfs-tools xorriso isolinux \
+            syslinux-utils genisoimage
 
-      - name: Build Rust Services
+      - name: Download Ubuntu 22.04 base ISO
         run: |
-          cd services
-          cargo build --release
+          wget -q -O /tmp/ubuntu-base.iso \
+            "https://releases.ubuntu.com/22.04/ubuntu-22.04.5-desktop-amd64.iso"
 
-      - name: Build TypeScript Shell
+      - name: Stage branding and extension assets
         run: |
-          cd shell
-          npm ci
-          npm run build
+          mkdir -p /tmp/axiora-branding
+          mkdir -p /tmp/axiora-extension
+          cp infra/branding/wallpaper.png /tmp/axiora-branding/
+          cp infra/branding/logo.png      /tmp/axiora-branding/
+          cp settings/extension.js        /tmp/axiora-extension/
+          cp settings/prefs.js            /tmp/axiora-extension/
+          cp settings/metadata.json       /tmp/axiora-extension/
+          mkdir -p /tmp/axiora-extension/schemas
+          cp settings/schemas/com.axiora.shell.gschema.xml /tmp/axiora-extension/schemas/
 
-      - name: Assemble ISO (Placeholder)
+      - name: Run Cubic chroot customisation (headless)
         run: |
-          echo "Assembling ISO using Cubic/preseed..."
-          mkdir -p dist
-          touch dist/axiora-os-dev.iso
+          # Mount the base ISO
+          MOUNT_DIR=$(mktemp -d)
+          CHROOT_DIR=$(mktemp -d)
+          sudo mount -o loop /tmp/ubuntu-base.iso "$MOUNT_DIR"
+          # Extract squashfs
+          sudo unsquashfs -d "$CHROOT_DIR" "$MOUNT_DIR/casper/filesystem.squashfs"
+          sudo umount "$MOUNT_DIR"
 
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v3
+          # Copy assets into chroot
+          sudo cp /tmp/axiora-shell-services_${{ env.AXIORA_VERSION }}_amd64.deb \
+            "$CHROOT_DIR/tmp/"
+          sudo cp -r /tmp/axiora-branding "$CHROOT_DIR/tmp/"
+          sudo cp -r /tmp/axiora-extension "$CHROOT_DIR/tmp/"
+          sudo cp installer/cubic-customise.sh "$CHROOT_DIR/tmp/"
+
+          # Run customisation inside chroot
+          sudo chroot "$CHROOT_DIR" bash /tmp/cubic-customise.sh
+
+          # Re-pack squashfs
+          ISO_STAGING=$(mktemp -d)
+          sudo mount -o loop /tmp/ubuntu-base.iso "$MOUNT_DIR"
+          sudo cp -rT "$MOUNT_DIR" "$ISO_STAGING"
+          sudo umount "$MOUNT_DIR"
+
+          sudo mksquashfs "$CHROOT_DIR" "$ISO_STAGING/casper/filesystem.squashfs" \
+            -comp xz -noappend -processors $(nproc)
+
+          # Update filesystem.size
+          sudo du -sx --block-size=1 "$CHROOT_DIR" | cut -f1 | \
+            sudo tee "$ISO_STAGING/casper/filesystem.size"
+
+          # Rebuild ISO
+          sudo xorriso -as mkisofs \
+            -r -V "Axiora OS ${{ env.AXIORA_VERSION }}" \
+            -o /tmp/axiora-os-${{ env.AXIORA_VERSION }}-amd64.iso \
+            -J -joliet-long \
+            -b isolinux/isolinux.bin \
+            -c isolinux/boot.cat \
+            -no-emul-boot -boot-load-size 4 -boot-info-table \
+            --efi-boot boot/grub/efi.img \
+            -efi-boot-part --efi-boot-image \
+            "$ISO_STAGING"
+
+      - name: Upload ISO artifact
+        uses: actions/upload-artifact@v4
         with:
           name: axiora-os-iso
-          path: dist/*.iso
+          path: /tmp/axiora-os-${{ env.AXIORA_VERSION }}-amd64.iso
+          retention-days: 14
+
+  # ── 5. Publish GitHub Release (on tag push) ──────────────────────────────
+  release:
+    name: Publish GitHub Release
+    runs-on: ubuntu-22.04
+    needs: build-iso
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download ISO
+        uses: actions/download-artifact@v4
+        with:
+          name: axiora-os-iso
+          path: /tmp/
+
+      - name: Download .deb
+        uses: actions/download-artifact@v4
+        with:
+          name: axiora-shell-services-deb
+          path: /tmp/
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "Axiora OS ${{ env.AXIORA_VERSION }} \"${{ env.AXIORA_CODENAME }}\""
+          body: |
+            ## Axiora OS ${{ env.AXIORA_VERSION }} "${{ env.AXIORA_CODENAME }}"
+
+            Built on Ubuntu 22.04 LTS (x86_64)
+
+            ### Downloads
+            | File | Description |
+            |---|---|
+            | `axiora-os-${{ env.AXIORA_VERSION }}-amd64.iso` | Bootable live ISO |
+            | `axiora-shell-services_${{ env.AXIORA_VERSION }}_amd64.deb` | Shell services package |
+
+            ### Installation
+            Flash the ISO to a USB drive using Balena Etcher or `dd`, then boot from it.
+
+            ### Release Notes
+            - Initial MVP release
+            - Floating glass dock with live running-app indicators
+            - App launcher with search
+            - Notification Center with Quick Settings
+            - Focus Mode daemon
+            - 5 accent colors (Axiora Blue, Axiora Purple, Emerald Green, Sunset Orange, Crimson Red)
+            - First-run Welcome Wizard
+          files: |
+            /tmp/axiora-os-${{ env.AXIORA_VERSION }}-amd64.iso
+            /tmp/axiora-shell-services_${{ env.AXIORA_VERSION }}_amd64.deb
+          draft: false
+          prerelease: ${{ !startsWith(github.ref, 'refs/tags/v') || contains(github.ref, 'dev') }}

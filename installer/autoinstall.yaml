@@ -1,0 +1,40 @@
+# Axiora OS — Ubuntu Autoinstall Configuration
+# ─────────────────────────────────────────────────────────────────────────────
+# This file is used by ubuntu-server's cloud-init autoinstall mechanism.
+# For the live desktop ISO, Ubiquity reads installer/preseed.cfg instead.
+# ─────────────────────────────────────────────────────────────────────────────
+
+version: 1
+
+locale: en_US.UTF-8
+keyboard:
+  layout: us
+
+identity:
+  hostname: axiora
+  username: axiora
+  password: "$6$rounds=4096$CHANGEME$abc"  # set a real hash at build time
+
+ssh:
+  install-server: false
+
+storage:
+  layout:
+    name: lvm
+
+packages:
+  - gnome-shell
+  - gnome-session
+  - network-manager
+  - pulseaudio
+
+late-commands:
+  # Install Axiora shell services deb
+  - curtin in-target --target=/target -- bash -c "dpkg -i /tmp/axiora-shell-services_0.1.0_amd64.deb || apt-get install -f -y"
+  # Enable dconf defaults
+  - curtin in-target --target=/target -- dconf update
+  # Enable GNOME extension
+  - curtin in-target --target=/target -- bash -c "gnome-extensions enable axiora-shell@axiora.os || true"
+
+user-data:
+  disable_root: true
