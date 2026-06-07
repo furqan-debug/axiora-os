@@ -9,13 +9,6 @@ interface AppItem {
   isRunning: boolean;
 }
 
-interface RunningApp {
-  id: string;
-  name: string;
-  icon: string;
-  is_active: boolean;
-}
-
 interface DockProps {
   onOpenSettings?: () => void;
   onOpenLauncher?: () => void;
@@ -71,9 +64,8 @@ export const Dock: React.FC<DockProps> = ({ onOpenSettings, onOpenLauncher }) =>
     };
   }, []);
 
-  // Merge pinned apps with running state
   const mergedApps = PINNED_APPS.map(app => {
-    const isRunning = runningApps.some(rApp => rApp.id === app.id && rApp.is_running);
+    const isRunning = runningApps.some(rApp => rApp.id === app.id && rApp.isRunning);
     return { ...app, isRunning };
   });
 
