@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 use zbus::{interface, Connection};
-use zvariant::Value;
+use zbus::zvariant::Value;
 
 pub struct NotificationServer {
     // Stores notifications in a simple queue for the MVP
