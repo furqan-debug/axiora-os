@@ -192,17 +192,14 @@ jobs:
           sudo du -sx --block-size=1 "$CHROOT_DIR" | cut -f1 | \
             sudo tee "$ISO_STAGING/casper/filesystem.size"
 
-          # Rebuild ISO
-          sudo xorriso -as mkisofs \
-            -r -V "Axiora OS ${{ env.AXIORA_VERSION }}" \
-            -o /tmp/axiora-os-${{ env.AXIORA_VERSION }}-amd64.iso \
-            -J -joliet-long \
-            -b isolinux/isolinux.bin \
-            -c isolinux/boot.cat \
-            -no-emul-boot -boot-load-size 4 -boot-info-table \
-            --efi-boot boot/grub/efi.img \
-            -efi-boot-part --efi-boot-image \
-            "$ISO_STAGING"
+          # Extract boot arguments from the base ISO to preserve UEFI/GRUB hybrid boot
+          xorriso -indev /tmp/ubuntu-base.iso -report_el_torito as_mkisofs > /tmp/boot_args.txt
+          # Remove the original volume ID from the arguments
+          sed -i '/^-V/d' /tmp/boot_args.txt
+          
+          # Build the xorriso command and run it
+          echo "sudo xorriso -as mkisofs -r -V \"Axiora OS ${{ env.AXIORA_VERSION }}\" -o /tmp/axiora-os-${{ env.AXIORA_VERSION }}-amd64.iso -J -joliet-long $(cat /tmp/boot_args.txt | tr '\n' ' ') \"$ISO_STAGING\"" > /tmp/build_iso.sh
+          bash /tmp/build_iso.sh
 
       - name: Upload ISO artifact
         uses: actions/upload-artifact@v4
