@@ -1,0 +1,16 @@
+[Unit]
+Description=Axiora OS Dock Daemon
+Documentation=https://axiora.os/docs
+After=graphical-session.target
+PartOf=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=/usr/lib/axiora/dock-daemon
+Restart=on-failure
+RestartSec=3s
+Environment=DISPLAY=:0
+Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus
+
+[Install]
+WantedBy=graphical-session.target

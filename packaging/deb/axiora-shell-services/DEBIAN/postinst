@@ -1,0 +1,20 @@
+#!/bin/bash
+# postinst - Run after deb package installation
+
+set -e
+
+# Install GSettings schema
+glib-compile-schemas /usr/share/glib-2.0/schemas/ || true
+
+# Install GNOME extension for all users
+EXTENSION_SRC="/usr/share/axiora/extensions/axiora-shell@axiora.os"
+SYSTEM_EXT_DIR="/usr/share/gnome-shell/extensions/axiora-shell@axiora.os"
+if [ -d "$EXTENSION_SRC" ]; then
+    cp -r "$EXTENSION_SRC" "$SYSTEM_EXT_DIR"
+    glib-compile-schemas "$SYSTEM_EXT_DIR/schemas/" || true
+fi
+
+# Reload systemd
+systemctl daemon-reload || true
+
+echo "Axiora Shell Services installed successfully."

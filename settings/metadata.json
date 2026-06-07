@@ -1,0 +1,8 @@
+{
+  "name": "Axiora Shell",
+  "description": "Custom GNOME Shell extension for Axiora OS – provides accent color theming, dock integration, and quick settings.",
+  "uuid": "axiora-shell@axiora.os",
+  "version": 1,
+  "shell-version": ["45", "46", "47"],
+  "url": "https://axiora.os"
+}

@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { invoke } from '@tauri-apps/api/tauri';
 import './NotificationCenter.css';
 
 interface Notification {
@@ -9,16 +10,47 @@ interface Notification {
   body: string;
 }
 
-const MOCK_NOTIFICATIONS: Notification[] = [
-  { id: '1', app: 'System', icon: '⚙️', title: 'System Update', body: 'Axiora OS Dev Build is ready to install.' },
-  { id: '2', app: 'Messages', icon: '💬', title: 'Alice', body: 'Are we still meeting at 3 PM?' },
-];
-
 export const NotificationCenter: React.FC = () => {
   const [focusMode, setFocusMode] = useState(false);
   const [wifi, setWifi] = useState(true);
   const [bluetooth, setBluetooth] = useState(false);
-  const [notifications, setNotifications] = useState(MOCK_NOTIFICATIONS);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+
+  useEffect(() => {
+    // Fetch notifications from the Rust daemon
+    const fetchNotifs = async () => {
+      try {
+        const rawNotifs: string[] = await invoke('fetch_notifications');
+        const parsed = rawNotifs.map((n, i) => {
+          const parts = n.split('|');
+          return {
+            id: i.toString(),
+            app: parts[0] || 'Unknown',
+            icon: parts[1] || '🔔',
+            title: parts[2] || 'Notification',
+            body: parts[3] || ''
+          };
+        });
+        setNotifications(prev => [...prev, ...parsed]);
+      } catch (e) {
+        console.error('Failed to fetch notifications:', e);
+      }
+    };
+    
+    fetchNotifs();
+    const interval = setInterval(fetchNotifs, 5000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const toggleFocus = async () => {
+    try {
+      const newState: boolean = await invoke('toggle_focus_mode');
+      setFocusMode(newState);
+    } catch (e) {
+      console.error('Failed to toggle focus mode:', e);
+      setFocusMode(!focusMode); // Fallback
+    }
+  };
 
   return (
     <div className="notification-panel">
@@ -42,7 +74,7 @@ export const NotificationCenter: React.FC = () => {
         </button>
         <button 
           className={`qs-toggle ${focusMode ? 'active' : ''}`}
-          onClick={() => setFocusMode(!focusMode)}
+          onClick={toggleFocus}
         >
           <span className="qs-icon">🌙</span> Focus
         </button>
@@ -75,3 +107,4 @@ export const NotificationCenter: React.FC = () => {
     </div>
   );
 };
+

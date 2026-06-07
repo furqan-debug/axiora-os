@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist gettext-domain="axiora-shell">
+  <schema id="com.axiora.shell" path="/com/axiora/shell/">
+
+    <key name="accent-color" type="s">
+      <default>'axiora-blue'</default>
+      <summary>Accent Color</summary>
+      <description>The accent color key used across the Axiora desktop experience.</description>
+    </key>
+
+    <key name="focus-mode-on-startup" type="b">
+      <default>false</default>
+      <summary>Enable Focus Mode on Startup</summary>
+      <description>Automatically suppress notifications when the user logs in.</description>
+    </key>
+
+    <key name="dock-autohide" type="b">
+      <default>false</default>
+      <summary>Auto-hide Dock</summary>
+      <description>Whether the dock should auto-hide when a window is maximized.</description>
+    </key>
+
+    <key name="launcher-trigger" type="s">
+      <default>'super'</default>
+      <summary>Launcher Trigger Key</summary>
+      <description>The key used to toggle the Axiora Launcher overlay.</description>
+    </key>
+
+  </schema>
+</schemalist>

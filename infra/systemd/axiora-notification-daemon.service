@@ -1,0 +1,16 @@
+[Unit]
+Description=Axiora OS Notification Daemon
+Documentation=https://axiora.os/docs
+After=graphical-session.target
+PartOf=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=/usr/lib/axiora/notification-daemon
+Restart=on-failure
+RestartSec=3s
+Environment=DISPLAY=:0
+Environment=DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus
+
+[Install]
+WantedBy=graphical-session.target
