@@ -1,0 +1,35 @@
+.context-menu {
+  position: absolute;
+  background: var(--surface-bg);
+  backdrop-filter: blur(var(--surface-blur));
+  -webkit-backdrop-filter: blur(var(--surface-blur));
+  border: 1px solid var(--surface-border);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  padding: 6px 0;
+  min-width: 200px;
+  z-index: 2000;
+  animation: fadeIn 0.15s ease-out;
+}
+
+.context-menu-item {
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  color: #DDD;
+  font-size: 13px;
+  transition: all 0.15s;
+}
+
+.context-menu-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.context-menu-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  margin: 6px 0;
+}

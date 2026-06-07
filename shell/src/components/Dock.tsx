@@ -9,6 +9,18 @@ interface AppItem {
   isRunning: boolean;
 }
 
+interface RunningApp {
+  id: string;
+  name: string;
+  icon: string;
+  is_active: boolean;
+}
+
+interface DockProps {
+  onOpenSettings?: () => void;
+  onOpenLauncher?: () => void;
+}
+
 const PINNED_APPS = [
   { id: 'launcher', name: 'Launcher', icon: '🚀' },
   { id: 'files', name: 'Files', icon: '📁' },
@@ -17,7 +29,7 @@ const PINNED_APPS = [
   { id: 'settings', name: 'Settings', icon: '⚙️' },
 ];
 
-export const Dock: React.FC = () => {
+export const Dock: React.FC<DockProps> = ({ onOpenSettings, onOpenLauncher }) => {
   const [time, setTime] = useState(new Date());
   const [systemStats, setSystemStats] = useState('RAM: Loading...');
   const [runningApps, setRunningApps] = useState<AppItem[]>([]);
@@ -68,7 +80,15 @@ export const Dock: React.FC = () => {
   return (
     <div className="dock-container">
       {mergedApps.map((app) => (
-        <button key={app.id} className="dock-item" title={app.name}>
+        <button 
+          key={app.id} 
+          className="dock-item" 
+          title={app.name}
+          onClick={() => {
+            if (app.id === 'settings' && onOpenSettings) onOpenSettings();
+            if (app.id === 'launcher' && onOpenLauncher) onOpenLauncher();
+          }}
+        >
           <span className="dock-item-icon">{app.icon}</span>
           {app.isRunning && <div className="dock-item-indicator" />}
         </button>

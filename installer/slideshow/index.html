@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Axiora OS — Installing</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="slideshow.css" />
+</head>
+<body>
+  <div class="slideshow-container" id="slideshow">
+
+    <!-- Slide 1: Welcome / Hero -->
+    <div class="slide active" id="slide-1">
+      <div class="slide-bg" style="background: radial-gradient(ellipse at 60% 40%, rgba(0,122,255,0.25) 0%, transparent 70%), #08080F;"></div>
+      <div class="slide-content centered">
+        <div class="hero-logo">✦</div>
+        <h1>Welcome to <span class="accent">Axiora OS</span></h1>
+        <p class="lead">A modern, fast, and beautifully crafted desktop experience — built on the rock-solid foundation of Ubuntu 22.04 LTS.</p>
+        <div class="feature-pills">
+          <span class="pill">🚀 Blazing Fast</span>
+          <span class="pill">🎨 Beautiful by Default</span>
+          <span class="pill">🔒 Privacy First</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 2: The Desktop -->
+    <div class="slide" id="slide-2">
+      <div class="slide-bg" style="background: radial-gradient(ellipse at 40% 60%, rgba(175,82,222,0.2) 0%, transparent 65%), #08080F;"></div>
+      <div class="slide-content split">
+        <div class="slide-text">
+          <span class="slide-tag">The Desktop</span>
+          <h2>Your desktop, <br/><span class="accent">reimagined.</span></h2>
+          <p>The Axiora floating dock keeps your favourite apps one click away. Frosted glass surfaces, smooth micro-animations, and a consistent design language make every interaction feel polished.</p>
+          <ul class="feature-list">
+            <li>⚡ Floating glass dock with live indicators</li>
+            <li>🔍 Instant app launcher with search</li>
+            <li>🌙 Elegant dark mode by default</li>
+          </ul>
+        </div>
+        <div class="slide-visual dock-preview">
+          <div class="mock-dock">
+            <div class="mock-icon">🚀</div>
+            <div class="mock-icon">📁</div>
+            <div class="mock-icon running">🌐<div class="dot"></div></div>
+            <div class="mock-icon running">💻<div class="dot"></div></div>
+            <div class="mock-icon">⚙️</div>
+          </div>
+          <p class="caption">Axiora Dock</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 3: Accent Colors -->
+    <div class="slide" id="slide-3">
+      <div class="slide-bg" style="background: radial-gradient(ellipse at 50% 30%, rgba(52,199,89,0.18) 0%, transparent 65%), #08080F;"></div>
+      <div class="slide-content centered">
+        <span class="slide-tag">Personalisation</span>
+        <h2>Make it <span class="accent-green">yours.</span></h2>
+        <p class="lead">Choose from five hand-picked accent colors that apply instantly across the entire desktop — dock, notifications, toggles, and more.</p>
+        <div class="color-showcase">
+          <div class="color-blob" style="background:#007AFF;" title="Axiora Blue"></div>
+          <div class="color-blob" style="background:#AF52DE;" title="Axiora Purple"></div>
+          <div class="color-blob active" style="background:#34C759;" title="Emerald Green"></div>
+          <div class="color-blob" style="background:#FF9500;" title="Sunset Orange"></div>
+          <div class="color-blob" style="background:#FF3B30;" title="Crimson Red"></div>
+        </div>
+        <p class="caption-center">5 accent colors. Switch anytime in Settings.</p>
+      </div>
+    </div>
+
+    <!-- Slide 4: Focus Mode -->
+    <div class="slide" id="slide-4">
+      <div class="slide-bg" style="background: radial-gradient(ellipse at 70% 50%, rgba(255,149,0,0.18) 0%, transparent 65%), #08080F;"></div>
+      <div class="slide-content split reverse">
+        <div class="slide-text">
+          <span class="slide-tag">Productivity</span>
+          <h2>Focus on <br/><span class="accent-orange">what matters.</span></h2>
+          <p>Axiora Focus Mode silences all notifications with a single tap from the Quick Settings panel. Your background Rust daemon keeps state consistent — even across app crashes.</p>
+          <ul class="feature-list">
+            <li>🌙 One-tap focus mode toggle</li>
+            <li>📬 Notifications queue while focused</li>
+            <li>🔄 Persistent state across sessions</li>
+          </ul>
+        </div>
+        <div class="slide-visual notif-preview">
+          <div class="mock-notif-panel">
+            <div class="qs-grid">
+              <div class="qs-btn active">📶 Wi-Fi</div>
+              <div class="qs-btn">🛜 BT</div>
+              <div class="qs-btn">🌗 Theme</div>
+              <div class="qs-btn focus-on">🌙 Focus</div>
+            </div>
+            <div class="mock-notif">
+              <span>⚙️</span>
+              <div><strong>System Update</strong><br/><small>Axiora 0.1.1 is ready</small></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 5: Privacy & Open Source -->
+    <div class="slide" id="slide-5">
+      <div class="slide-bg" style="background: radial-gradient(ellipse at 30% 60%, rgba(255,59,48,0.15) 0%, transparent 65%), #08080F;"></div>
+      <div class="slide-content centered">
+        <div class="hero-logo" style="font-size:48px;">🔒</div>
+        <h2>Built for <span class="accent-red">trust.</span></h2>
+        <p class="lead">Axiora OS collects zero telemetry by default. No accounts required. No phone-home. Your data stays on your machine — always.</p>
+        <div class="trust-grid">
+          <div class="trust-card">
+            <div class="trust-icon">🌐</div>
+            <h4>Open Source</h4>
+            <p>All code on GitHub, MIT licensed</p>
+          </div>
+          <div class="trust-card">
+            <div class="trust-icon">📵</div>
+            <h4>No Telemetry</h4>
+            <p>Nothing sent without explicit consent</p>
+          </div>
+          <div class="trust-card">
+            <div class="trust-icon">📦</div>
+            <h4>Flatpak First</h4>
+            <p>Sandboxed apps, secure by design</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 6: Almost there -->
+    <div class="slide" id="slide-6">
+      <div class="slide-bg" style="background: radial-gradient(ellipse at 50% 50%, rgba(0,122,255,0.2) 0%, transparent 70%), #08080F;"></div>
+      <div class="slide-content centered">
+        <div class="hero-logo">✨</div>
+        <h1>Almost ready…</h1>
+        <p class="lead">Axiora OS is being installed on your machine. This usually takes 5–10 minutes.</p>
+        <div class="install-dots">
+          <div class="idot"></div>
+          <div class="idot"></div>
+          <div class="idot"></div>
+        </div>
+        <p class="caption-center" style="margin-top:32px;">axiora.os &nbsp;·&nbsp; v0.1.0 "Vega"</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Nav dots -->
+  <div class="nav-dots" id="nav-dots"></div>
+
+  <script src="slideshow.js"></script>
+</body>
+</html>

@@ -1,58 +1,96 @@
-/* axiora-gtk.css - Base GTK theme for Axiora OS */
-/* Implements frosted-glass, rounded corners, and accent colors */
+/* Axiora GTK3 Customisations
+ * This CSS file layers on top of Adwaita-dark to bring
+ * Axiora's design language to legacy GTK applications.
+ */
 
 @define-color axiora_blue #007AFF;
-@define-color axiora_purple #AF52DE;
-@define-color emerald_green #34C759;
-@define-color sunset_orange #FF9500;
-@define-color crimson_red #FF3B30;
+@define-color axiora_bg #08080F;
+@define-color axiora_surface rgba(20, 20, 25, 0.8);
 
-/* Default accent color */
-@define-color theme_selected_bg_color @axiora_blue;
-
-/* Global window styles */
-window {
-    border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+/* Base background */
+window, 
+window.background,
+.background {
+    background-color: @axiora_bg;
+    color: #FAFAFA;
 }
 
-/* Frosted glass effect for panels and sidebars */
-.axiora-panel, .sidebar, popover.background {
-    background-color: rgba(30, 30, 30, 0.6);
-    backdrop-filter: blur(20px);
-    -gtk-backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+/* Header bars (titlebars) */
+headerbar {
+    background-color: @axiora_bg;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: none;
+    min-height: 48px;
 }
 
-/* Rounded buttons */
+headerbar .title {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+/* Buttons */
 button {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 8px;
-    transition: all 200ms ease;
+    padding: 6px 14px;
+    transition: all 0.2s ease;
 }
 
 button:hover {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
-button:active {
-    background-color: @theme_selected_bg_color;
+button.suggested-action {
+    background-color: @axiora_blue;
+    border-color: @axiora_blue;
     color: white;
 }
 
-/* Entry fields */
+button.suggested-action:hover {
+    background-color: #1A8CFF;
+}
+
+/* Text inputs */
 entry {
-    border-radius: 8px;
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: rgba(0, 0, 0, 0.4);
     border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 6px 12px;
 }
 
 entry:focus {
-    border-color: @theme_selected_bg_color;
+    border-color: @axiora_blue;
     box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.3);
 }
 
-/* Dark mode default background */
-.background {
-    background-color: #121212;
-    color: #FAFAFA;
+/* Menus & Popovers */
+popover {
+    background-color: @axiora_surface;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+/* Scrollbars */
+scrollbar slider {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    min-width: 6px;
+}
+
+scrollbar slider:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Sidebar */
+.sidebar {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.sidebar row:selected {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: @axiora_blue;
 }
