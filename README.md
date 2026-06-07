@@ -16,7 +16,7 @@
 
 This repository contains everything needed to build the Axiora Desktop Shell, the backend system daemons, and the bootable ISO.
 
-## ✨ Features
+## Features
 
 - **Floating Glass Dock:** A centered dock with smooth micro-animations and live indicators for running applications.
 - **Search Launcher:** A frosted glass overlay to instantly find and launch your apps.
@@ -25,7 +25,7 @@ This repository contains everything needed to build the Axiora Desktop Shell, th
 - **Personalisation:** Choose from five beautiful accent colours (Axiora Blue, Purple, Emerald Green, Sunset Orange, Crimson Red) that apply system-wide.
 - **Privacy First:** Zero telemetry. Everything stays on your machine.
 
-## 🏗️ Architecture
+## Architecture
 
 Axiora is built with modern, performant web and system technologies:
 
@@ -33,7 +33,7 @@ Axiora is built with modern, performant web and system technologies:
 - **Backend Daemons (`/services`):** Written in **Rust**. Uses `zbus` and `tokio` to create lightweight, memory-safe system DBus services that manage notifications, dock state, and focus mode.
 - **ISO Builder (`/installer`):** Fully automated via GitHub Actions using **Cubic** to bake the shell, daemons, Plymouth boot splash, and GRUB themes into a ready-to-flash `.iso`.
 
-## 🚀 Getting Started
+## Getting Started
 
 ### 1. Download the ISO
 Head to the [Releases](../../releases) page to download the latest bootable `.iso` file. Flash it to a USB drive using Rufus or BalenaEtcher to install it on your PC.
@@ -59,8 +59,8 @@ bash packaging/deb/build-deb.sh
 # Then use Cubic to inject the installer scripts
 ```
 
-## 🤝 Contributing
+## Contributing
 Axiora OS is open source and community-driven. If you'd like to contribute, check out our [Contributing Guidelines](CONTRIBUTING.md) to get started!
 
-## 📄 License
+## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
