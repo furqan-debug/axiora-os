@@ -1,61 +1,66 @@
-# Axiora OS
-
-![Axiora Logo](file:///C:/Users/Mustafa-PC/.gemini/antigravity/brain/3cc5499d-4e93-42a3-97e9-8921078bd08c/axiora_logo_1780785863925.png)
-
-## Overview
-Axiora OS is a premium, lightweight desktop experience built on top of Ubuntu 22.04 LTS, Wayland, and GNOME with a custom shell. The goal is to deliver a fast, beautiful, and productive environment that can be installed via a simple ISO.
-
-## Repository Structure
-- `docs/` – Design system, architecture diagrams, developer documentation.
-- `infra/` – Ubuntu provisioning scripts, ISO build pipeline, branding assets.
-- `shell/` – TypeScript source for the custom Axiora Shell UI (Dock, Launcher, Notification Center, Quick Settings).
-- `services/` – Rust crates for system utilities (focus‑mode daemon, workspace profiles, etc.).
-- `installer/` – Preseed files, branding assets, ISO customization scripts.
-- `themes/` – GNOME theme files implementing frosted‑glass and accent colors.
-- `packaging/` – Debian packaging metadata for custom .deb packages.
-- `ci/` – CI pipelines (GitHub Actions) for automated builds and tests.
-- `website/` – Landing page and documentation site.
-
-## Getting Started
-```bash
-# Clone the repo
-git clone https://github.com/yourorg/axiora-os.git
-cd axiora-os
-
-# Run the Ubuntu provisioning script (requires Docker)
-./infra/setup_ubuntu.sh
-```
-
-## Contributing
-Please read `CONTRIBUTING.md` for guidelines on how to contribute code, report bugs, and propose new features.
-
-## License
-Axiora OS is released under the MIT License.
-
-
-A modern, premium‑looking desktop OS built on Ubuntu LTS, Wayland, and GNOME with a custom Axiora Shell.
-
-## Quick Start
-
-1. Clone this repository.
-2. Run the CI pipeline or use the provided ISO builder to generate a bootable installer.
-3. Install on a machine and enjoy a fast, beautiful desktop experience.
-
-## Repository Layout
-
-- `infra/` – Ubuntu base provisioning, ISO creation scripts, branding assets.
-- `shell/` – TypeScript source for the custom Axiora Shell (Dock, Launcher, Notification Center, Quick Settings).
-- `services/` – Rust daemons providing background functionality (dock manager, notification service, focus mode, workspace profiles).
-- `themes/` – GNOME theme files implementing the frosted‑glass design language.
-- `installer/` – Preseed configuration and ISO customization.
-- `docs/` – Design system, architecture diagrams, developer guide.
-- `packaging/` – Debian packaging metadata for custom utilities.
-- `ci/` – GitHub Actions workflows for building, testing, and releasing the ISO.
-
-## Contributing
-
-Please read the `CONTRIBUTING.md` (to be added) for guidelines on code style, commit messages, and testing.
+<div align="center">
+  <img src="infra/branding/logo.png" width="128" height="128" alt="Axiora OS Logo">
+  <h1>Axiora OS</h1>
+  <p><strong>A modern, fast, and beautiful Linux desktop experience.</strong></p>
+  
+  <p>
+    <a href="https://github.com/furqan-debug/axiora-os/actions/workflows/build-iso.yml"><img src="https://github.com/furqan-debug/axiora-os/actions/workflows/build-iso.yml/badge.svg" alt="Build Status"></a>
+    <a href="https://github.com/furqan-debug/axiora-os/blob/master/LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License"></a>
+    <img src="https://img.shields.io/badge/platform-Linux-lightgrey.svg" alt="Platform">
+  </p>
+</div>
 
 ---
 
-© 2026 Axiora OS – All rights reserved.
+**Axiora OS** is an open-source desktop environment layer built on top of the rock-solid Ubuntu 22.04 LTS foundation. It is designed to be visually stunning, blazingly fast, and respectful of your privacy. 
+
+This repository contains everything needed to build the Axiora Desktop Shell, the backend system daemons, and the bootable ISO.
+
+## ✨ Features
+
+- **Floating Glass Dock:** A centered dock with smooth micro-animations and live indicators for running applications.
+- **Search Launcher:** A frosted glass overlay to instantly find and launch your apps.
+- **Notification Center & Quick Settings:** Manage Wi-Fi, Bluetooth, and system settings from a unified slide-out panel.
+- **Focus Mode:** Silence all notifications with a single click — powered by a thread-safe Rust DBus daemon.
+- **Personalisation:** Choose from five beautiful accent colours (Axiora Blue, Purple, Emerald Green, Sunset Orange, Crimson Red) that apply system-wide.
+- **Privacy First:** Zero telemetry. Everything stays on your machine.
+
+## 🏗️ Architecture
+
+Axiora is built with modern, performant web and system technologies:
+
+- **Frontend Shell (`/shell`):** Built with React, TypeScript, and Vite. Uses raw CSS to achieve fluid, hardware-accelerated frosted glass animations. Wrapped as a transparent, frameless desktop overlay using **Tauri**.
+- **Backend Daemons (`/services`):** Written in **Rust**. Uses `zbus` and `tokio` to create lightweight, memory-safe system DBus services that manage notifications, dock state, and focus mode.
+- **ISO Builder (`/installer`):** Fully automated via GitHub Actions using **Cubic** to bake the shell, daemons, Plymouth boot splash, and GRUB themes into a ready-to-flash `.iso`.
+
+## 🚀 Getting Started
+
+### 1. Download the ISO
+Head to the [Releases](../../releases) page to download the latest bootable `.iso` file. Flash it to a USB drive using Rufus or BalenaEtcher to install it on your PC.
+
+### 2. Run the UI Locally (For Developers)
+Want to hack on the UI without building the whole OS? You can run the React frontend natively on your current machine (Windows/macOS/Linux):
+
+```bash
+# Clone the repository
+git clone https://github.com/furqan-debug/axiora-os.git
+cd axiora-os/shell
+
+# Install dependencies and start the dev server
+npm install
+npm run dev
+```
+
+### 3. Build the ISO from source
+To build the `.iso` yourself, run our automated pipeline on an Ubuntu 22.04 host:
+```bash
+bash infra/setup_ubuntu.sh
+bash packaging/deb/build-deb.sh
+# Then use Cubic to inject the installer scripts
+```
+
+## 🤝 Contributing
+Axiora OS is open source and community-driven. If you'd like to contribute, check out our [Contributing Guidelines](CONTRIBUTING.md) to get started!
+
+## 📄 License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
