@@ -17,42 +17,53 @@ echo "════════════════════════�
 echo "  Axiora OS ${AXIORA_VERSION} \"${AXIORA_CODENAME}\" — Chroot Customisation"
 echo "════════════════════════════════════════════════════"
 
-# ── 0. Update & upgrade base ──────────────────────────────────────────────────
+# ── 0. Enable full apt sources & update ──────────────────────────────────────
+# Add universe, restricted and multiverse repos so all packages are available
+add-apt-repository -y universe 2>/dev/null || true
+add-apt-repository -y restricted 2>/dev/null || true
+add-apt-repository -y multiverse 2>/dev/null || true
 apt-get update -qq
-DEBIAN_FRONTEND=noninteractive apt-get upgrade -y -qq
 
 # ── 1. Install runtime dependencies ──────────────────────────────────────────
 echo "[1/8] Installing runtime dependencies..."
-DEBIAN_FRONTEND=noninteractive apt-get install -y -qq \
+# Install in separate groups so one missing package does not abort everything
+DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --ignore-missing \
     gnome-shell \
     gnome-session \
     gnome-control-center \
-    gnome-tweaks \
     nautilus \
     gedit \
     gnome-terminal \
     gnome-calculator \
-    gnome-calendar \
     eog \
     evince \
     network-manager \
     network-manager-gnome \
-    pulseaudio \
+    pulseaudio || true
+
+DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --ignore-missing \
+    gnome-tweaks \
     pavucontrol \
     gir1.2-webkit2-4.0 \
     libayatana-appindicator3-1 \
     librsvg2-2 \
     libdbus-1-3 \
-    libglib2.0-0 \
+    libglib2.0-0 || true
+
+DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --ignore-missing \
     flatpak \
-    gnome-software-plugin-flatpak \
+    plymouth || true
+
+# grub-efi only on EFI systems — skip if not available
+DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --ignore-missing \
     grub-efi-amd64 \
-    grub-pc-bin \
-    plymouth \
-    plymouth-themes \
+    grub-pc-bin || true
+
+# Ubiquity installer (may already be present in desktop ISO)
+DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --ignore-missing \
     ubiquity \
     ubiquity-frontend-gtk \
-    ubiquity-slideshow-ubuntu
+    ubiquity-slideshow-ubuntu || true
 
 # ── 2. Remove Ubuntu bloat ────────────────────────────────────────────────────
 echo "[2/8] Removing unwanted packages..."

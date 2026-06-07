@@ -164,8 +164,20 @@ jobs:
           sudo rm -f "$CHROOT_DIR/etc/resolv.conf"
           sudo cp /etc/resolv.conf "$CHROOT_DIR/etc/resolv.conf"
 
+          # Bind-mount kernel virtual filesystems so apt scripts work correctly
+          sudo mount --bind /proc "$CHROOT_DIR/proc"
+          sudo mount --bind /sys  "$CHROOT_DIR/sys"
+          sudo mount --bind /dev  "$CHROOT_DIR/dev"
+          sudo mount --bind /dev/pts "$CHROOT_DIR/dev/pts"
+
           # Run customisation inside chroot
           sudo chroot "$CHROOT_DIR" bash /tmp/cubic-customise.sh
+
+          # Unmount virtual filesystems
+          sudo umount "$CHROOT_DIR/dev/pts" || true
+          sudo umount "$CHROOT_DIR/dev"  || true
+          sudo umount "$CHROOT_DIR/sys"  || true
+          sudo umount "$CHROOT_DIR/proc" || true
 
           # Re-pack squashfs
           ISO_STAGING=$(mktemp -d)
