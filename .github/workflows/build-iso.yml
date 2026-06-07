@@ -1,0 +1,51 @@
+name: Build Axiora OS ISO
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+  schedule:
+    # Weekly builds on Sunday at midnight for Dev Channel
+    - cron: '0 0 * * 0'
+
+jobs:
+  build-iso:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential curl wget xorriso squashfs-tools mtools
+
+      - name: Setup Ubuntu Base
+        run: |
+          chmod +x ./infra/setup_ubuntu.sh
+          # Note: actual ISO build step requires docker or cubic setup in CI
+          # ./infra/setup_ubuntu.sh
+
+      - name: Build Rust Services
+        run: |
+          cd services
+          cargo build --release
+
+      - name: Build TypeScript Shell
+        run: |
+          cd shell
+          npm ci
+          npm run build
+
+      - name: Assemble ISO (Placeholder)
+        run: |
+          echo "Assembling ISO using Cubic/preseed..."
+          mkdir -p dist
+          touch dist/axiora-os-dev.iso
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: axiora-os-iso
+          path: dist/*.iso

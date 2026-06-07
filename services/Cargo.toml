@@ -1,0 +1,6 @@
+[workspace]
+members = [
+    "dock_daemon",
+    "notification_daemon",
+    "focus_mode"
+]

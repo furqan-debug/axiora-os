@@ -1,0 +1,38 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Axiora OS Workspace Profile",
+    "type": "object",
+    "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "theme": {
+            "type": "object",
+            "properties": {
+                "wallpaper": { "type": "string" },
+                "color_scheme": { "type": "string", "enum": ["light", "dark", "auto"] },
+                "accent_color": { "type": "string" }
+            }
+        },
+        "dock": {
+            "type": "object",
+            "properties": {
+                "pinned_apps": {
+                    "type": "array",
+                    "items": { "type": "string" }
+                }
+            }
+        },
+        "notifications": {
+            "type": "object",
+            "properties": {
+                "dnd_enabled": { "type": "boolean" },
+                "allowed_apps": {
+                    "type": "array",
+                    "items": { "type": "string" }
+                }
+            }
+        }
+    },
+    "required": ["id", "name", "theme", "dock"]
+}
