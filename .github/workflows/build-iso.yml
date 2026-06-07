@@ -160,6 +160,10 @@ jobs:
           sudo cp -r /tmp/axiora-extension "$CHROOT_DIR/tmp/"
           sudo cp installer/cubic-customise.sh "$CHROOT_DIR/tmp/"
 
+          # Provide DNS resolution inside chroot
+          sudo rm -f "$CHROOT_DIR/etc/resolv.conf"
+          sudo cp /etc/resolv.conf "$CHROOT_DIR/etc/resolv.conf"
+
           # Run customisation inside chroot
           sudo chroot "$CHROOT_DIR" bash /tmp/cubic-customise.sh
 
