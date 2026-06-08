@@ -231,9 +231,9 @@ pro config set apt_news=false 2>/dev/null || true
 snap remove --purge snap-store 2>/dev/null || true
 
 # Enable systemd services installed by the .deb
-systemctl enable axiora-notification-daemon.service 2>/dev/null || true
-systemctl enable axiora-dock-daemon.service 2>/dev/null || true
-systemctl enable axiora-focus-mode.service 2>/dev/null || true
+systemctl --global enable axiora-notification-daemon.service 2>/dev/null || true
+systemctl --global enable axiora-dock-daemon.service 2>/dev/null || true
+systemctl --global enable axiora-focus-mode.service 2>/dev/null || true
 
 # ── Done ──────────────────────────────────────────────────────────────────────
 echo ""
