@@ -68,6 +68,9 @@ DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --ignore-missing \
 # ── 2. Remove Ubuntu bloat ────────────────────────────────────────────────────
 echo "[2/8] Removing unwanted packages..."
 DEBIAN_FRONTEND=noninteractive apt-get remove -y -qq \
+    ubuntu-session \
+    ubuntu-desktop \
+    ubuntu-desktop-minimal \
     ubuntu-web-launchers \
     aisleriot \
     gnome-mahjongg \
