@@ -229,6 +229,11 @@ jobs:
           name: axiora-shell-services-deb
           path: /tmp/
 
+      - name: Split ISO for GitHub Release
+        run: |
+          cd /tmp
+          split -b 1500M axiora-os-${{ env.AXIORA_VERSION }}-amd64.iso axiora-os-${{ env.AXIORA_VERSION }}-amd64.iso.part
+
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
@@ -241,11 +246,23 @@ jobs:
             ### Downloads
             | File | Description |
             |---|---|
-            | `axiora-os-${{ env.AXIORA_VERSION }}-amd64.iso` | Bootable live ISO |
+            | `axiora-os-${{ env.AXIORA_VERSION }}-amd64.iso.part*` | Bootable live ISO (Split into parts) |
             | `axiora-shell-services_${{ env.AXIORA_VERSION }}_amd64.deb` | Shell services package |
 
             ### Installation
-            Flash the ISO to a USB drive using Balena Etcher or `dd`, then boot from it.
+            Since the ISO exceeds GitHub's 2GB file limit, it has been split into multiple parts. Download all `.part*` files and combine them before flashing:
+            
+            **Linux / macOS:**
+            ```bash
+            cat axiora-os-${{ env.AXIORA_VERSION }}-amd64.iso.part* > axiora-os-${{ env.AXIORA_VERSION }}-amd64.iso
+            ```
+            
+            **Windows (Command Prompt):**
+            ```cmd
+            copy /b axiora-os-${{ env.AXIORA_VERSION }}-amd64.iso.part* axiora-os-${{ env.AXIORA_VERSION }}-amd64.iso
+            ```
+
+            Then flash the resulting `axiora-os-${{ env.AXIORA_VERSION }}-amd64.iso` to a USB drive using Balena Etcher or `dd`, and boot from it.
 
             ### Release Notes
             - Initial MVP release
@@ -256,7 +273,7 @@ jobs:
             - 5 accent colors (Axiora Blue, Axiora Purple, Emerald Green, Sunset Orange, Crimson Red)
             - First-run Welcome Wizard
           files: |
-            /tmp/axiora-os-${{ env.AXIORA_VERSION }}-amd64.iso
+            /tmp/axiora-os-${{ env.AXIORA_VERSION }}-amd64.iso.part*
             /tmp/axiora-shell-services_${{ env.AXIORA_VERSION }}_amd64.deb
           draft: false
           prerelease: ${{ !startsWith(github.ref, 'refs/tags/v') || contains(github.ref, 'dev') }}
