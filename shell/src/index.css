@@ -52,7 +52,7 @@ body {
   width: 100vw;
   overflow: hidden;
   /* Simulating desktop wallpaper for development */
-  background-image: url('../../infra/branding/wallpaper.png');
+  background-image: url('/wallpaper.png');
   background-size: cover;
   background-position: center;
 }
