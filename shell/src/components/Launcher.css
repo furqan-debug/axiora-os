@@ -4,9 +4,9 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(10, 10, 10, 0.5);
-  backdrop-filter: blur(48px);
-  -webkit-backdrop-filter: blur(48px);
+  background: rgba(10, 10, 10, 0.4);
+  backdrop-filter: blur(48px) saturate(150%);
+  -webkit-backdrop-filter: blur(48px) saturate(150%);
   z-index: 900;
   display: flex;
   justify-content: center;
@@ -45,12 +45,12 @@
   font-size: 1.25rem;
   font-weight: 400;
   color: var(--text-color);
-  background: rgba(30, 30, 30, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(30, 30, 30, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 16px;
   outline: none;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-md), inset 0 1px 4px rgba(0,0,0,0.5);
 }
 
 .search-input::placeholder {
@@ -58,9 +58,9 @@
 }
 
 .search-input:focus {
-  border-color: var(--accent-color);
-  background: rgba(40, 40, 40, 0.7);
-  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.25), 0 12px 40px rgba(0, 0, 0, 0.3);
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(40, 40, 40, 0.5);
+  box-shadow: var(--shadow-lg), inset 0 1px 4px rgba(0,0,0,0.5);
 }
 
 .app-grid-container {
@@ -98,9 +98,10 @@
 }
 
 .app-card:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
   transform: translateY(-4px) scale(1.05);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-md);
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .app-card:active {
@@ -116,13 +117,15 @@
   border-radius: 16px;
   background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.02) 100%);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 4px 12px rgba(0,0,0,0.1);
+  box-shadow: inset 0 1px 1px rgba(255,255,255,0.2), var(--shadow-sm);
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
   transition: all 0.2s ease;
 }
 
 .app-card:hover .app-icon {
   border-color: rgba(255, 255, 255, 0.15);
   background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 100%);
+  box-shadow: inset 0 1px 1px rgba(255,255,255,0.3), var(--shadow-sm);
 }
 
 .app-name {

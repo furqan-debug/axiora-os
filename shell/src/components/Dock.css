@@ -10,7 +10,11 @@
   border-radius: 24px;
   z-index: 1000;
   animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-  /* The glass-surface class from index.css applies the background and blur */
+  background: var(--dock-bg);
+  backdrop-filter: blur(48px) saturate(180%);
+  -webkit-backdrop-filter: blur(48px) saturate(180%);
+  border: 1px solid var(--dock-border);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.15);
 }
 
 .dock-item-wrapper {
@@ -35,9 +39,9 @@
 }
 
 .dock-item:hover {
-  transform: translateY(-6px) scale(1.15);
-  background: rgba(255, 255, 255, 0.12);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transform: translateY(-8px) scale(1.15);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.2);
 }
 
 .dock-item:active {
@@ -49,6 +53,7 @@
   align-items: center;
   justify-content: center;
   transition: color 0.2s ease;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
 }
 
 .dock-item:hover .dock-item-icon {
@@ -129,4 +134,44 @@
   font-size: 14px;
   font-weight: 500;
   letter-spacing: 0.2px;
+}
+
+.dock-context-menu {
+  position: fixed;
+  background: var(--surface-bg);
+  backdrop-filter: blur(var(--surface-blur)) saturate(150%);
+  -webkit-backdrop-filter: blur(var(--surface-blur)) saturate(150%);
+  border: 1px solid var(--surface-border);
+  border-radius: 12px;
+  box-shadow: var(--shadow-lg);
+  padding: 4px;
+  min-width: 140px;
+  z-index: 3000;
+  animation: scaleInMenu 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: bottom center;
+}
+
+.dock-context-item {
+  padding: 8px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-color);
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dock-context-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.dock-context-item.danger {
+  color: #FF5F56;
+}
+
+.dock-context-item.danger:hover {
+  background: rgba(255, 95, 86, 0.15);
 }

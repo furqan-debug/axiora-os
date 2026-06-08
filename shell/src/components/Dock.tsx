@@ -1,22 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { invoke } from '@tauri-apps/api/core';
 import { 
   LayoutGrid, 
   Folder, 
   Globe, 
   TerminalSquare, 
-  Settings, 
-  Wifi, 
-  BatteryMedium 
+  Settings
 } from 'lucide-react';
+import { useWindowManager } from './WindowManagerProvider';
 import './Dock.css';
 
-interface AppItem {
-  id: string;
-  name: string;
-  icon: React.ReactNode;
-  isRunning: boolean;
-}
+
 
 interface DockProps {
   onOpenSettings?: () => void;
@@ -32,46 +25,17 @@ const PINNED_APPS = [
 ];
 
 export const Dock: React.FC<DockProps> = ({ onOpenSettings, onOpenLauncher }) => {
-  const [time, setTime] = useState(new Date());
-  const [systemStats, setSystemStats] = useState('RAM: Loading...');
-  const [runningApps, setRunningApps] = useState<AppItem[]>([]);
+  const { windows, openApp, focusWindow, minimizeWindow, closeWindow, activeWindowId } = useWindowManager();
+  const runningApps = windows.map(w => ({ id: w.appId, isRunning: true, windowId: w.id }));
+
   const [hoveredApp, setHoveredApp] = useState<string | null>(null);
+  const [dockContextMenu, setDockContextMenu] = useState<{appId: string, x: number, y: number, isRunning: boolean} | null>(null);
 
+  // Close context menu on outside click
   useEffect(() => {
-    const timer = setInterval(() => setTime(new Date()), 60000);
-    
-    // Fetch system stats
-    const fetchStats = async () => {
-      try {
-        const stats: string = await invoke('get_system_stats');
-        setSystemStats(stats);
-      } catch (e) {
-        console.error(e);
-      }
-    };
-
-    // Fetch running apps
-    const fetchApps = async () => {
-      try {
-        const appsJson: string = await invoke('fetch_running_apps');
-        const apps = JSON.parse(appsJson);
-        setRunningApps(apps);
-      } catch (e) {
-        console.error(e);
-      }
-    };
-
-    fetchStats();
-    fetchApps();
-    const statInterval = setInterval(() => {
-      fetchStats();
-      fetchApps();
-    }, 2000);
-    
-    return () => {
-      clearInterval(timer);
-      clearInterval(statInterval);
-    };
+    const handleOutsideClick = () => setDockContextMenu(null);
+    window.addEventListener('click', handleOutsideClick);
+    return () => window.removeEventListener('click', handleOutsideClick);
   }, []);
 
   const mergedApps = PINNED_APPS.map(app => {
@@ -82,14 +46,37 @@ export const Dock: React.FC<DockProps> = ({ onOpenSettings, onOpenLauncher }) =>
   return (
     <div className="dock-container glass-surface">
       {mergedApps.map((app) => (
-        <div className="dock-item-wrapper" key={app.id}>
+        <div 
+          className="dock-item-wrapper" 
+          key={app.id}
+          onContextMenu={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setDockContextMenu({ appId: app.id, x: e.clientX, y: e.clientY - 60, isRunning: app.isRunning });
+          }}
+        >
           <button 
             className={`dock-item ${hoveredApp === app.id ? 'hovered' : ''}`}
             onMouseEnter={() => setHoveredApp(app.id)}
             onMouseLeave={() => setHoveredApp(null)}
             onClick={() => {
-              if (app.id === 'settings' && onOpenSettings) onOpenSettings();
-              if (app.id === 'launcher' && onOpenLauncher) onOpenLauncher();
+              if (app.id === 'settings') {
+                if (onOpenSettings) onOpenSettings();
+              } else if (app.id === 'launcher') {
+                if (onOpenLauncher) onOpenLauncher();
+              } else {
+                // If the app is already open, focus or toggle minimize
+                const existingWindow = windows.find(w => w.appId === app.id);
+                if (existingWindow) {
+                  if (activeWindowId === existingWindow.id) {
+                    minimizeWindow(existingWindow.id);
+                  } else {
+                    focusWindow(existingWindow.id);
+                  }
+                } else {
+                  openApp(app.id, app.name);
+                }
+              }
             }}
           >
             <span className="dock-item-icon">{app.icon}</span>
@@ -103,21 +90,38 @@ export const Dock: React.FC<DockProps> = ({ onOpenSettings, onOpenLauncher }) =>
           )}
         </div>
       ))}
-      <div className="dock-divider" />
-      <div className="system-tray">
-        <div className="tray-item stats-item" title={systemStats}>
-          <span>{systemStats}</span>
+      
+      {dockContextMenu && (
+        <div 
+          className="dock-context-menu"
+          style={{ left: dockContextMenu.x, top: dockContextMenu.y }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {dockContextMenu.isRunning ? (
+            <div 
+              className="dock-context-item danger"
+              onClick={() => {
+                const existingWindow = windows.find(w => w.appId === dockContextMenu.appId);
+                if (existingWindow) closeWindow(existingWindow.id);
+                setDockContextMenu(null);
+              }}
+            >
+              Close Window
+            </div>
+          ) : (
+            <div 
+              className="dock-context-item"
+              onClick={() => {
+                const app = PINNED_APPS.find(a => a.id === dockContextMenu.appId);
+                if (app) openApp(app.id, app.name);
+                setDockContextMenu(null);
+              }}
+            >
+              Open App
+            </div>
+          )}
         </div>
-        <div className="tray-item" title="Wi-Fi">
-          <Wifi size={16} strokeWidth={2} />
-        </div>
-        <div className="tray-item" title="Battery 85%">
-          <BatteryMedium size={18} strokeWidth={2} />
-        </div>
-        <div className="tray-item time-display">
-          {time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-        </div>
-      </div>
+      )}
     </div>
   );
 };

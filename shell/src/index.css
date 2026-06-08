@@ -13,19 +13,19 @@
   --text-muted: rgba(250, 250, 250, 0.6);
   --text-disabled: rgba(250, 250, 250, 0.3);
   
-  /* Frosted Glass Elements */
-  --surface-bg: rgba(20, 20, 20, 0.65);
+  /* Elevated Glass Elements */
+  --surface-bg: linear-gradient(135deg, rgba(30, 30, 35, 0.65), rgba(15, 15, 20, 0.75));
   --surface-border: rgba(255, 255, 255, 0.08);
   --surface-border-hover: rgba(255, 255, 255, 0.15);
-  --surface-blur: 32px;
+  --surface-blur: 40px;
   
-  --dock-bg: rgba(10, 10, 10, 0.6);
+  --dock-bg: linear-gradient(180deg, rgba(20, 20, 25, 0.65), rgba(10, 10, 15, 0.75));
   --dock-border: rgba(255, 255, 255, 0.12);
 
-  /* Shadows */
-  --shadow-sm: 0 4px 16px rgba(0, 0, 0, 0.2);
-  --shadow-md: 0 8px 32px rgba(0, 0, 0, 0.35);
-  --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.5);
+  /* Depth Shadows */
+  --shadow-sm: 0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.05);
+  --shadow-md: 0 12px 32px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.08);
+  --shadow-lg: 0 24px 64px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.05), inset 0 1px 1px rgba(255, 255, 255, 0.12);
 
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -60,12 +60,12 @@ body {
 /* Reusable Glass Surface Class */
 .glass-surface {
   background: var(--surface-bg);
-  backdrop-filter: blur(var(--surface-blur));
-  -webkit-backdrop-filter: blur(var(--surface-blur));
+  backdrop-filter: blur(var(--surface-blur)) saturate(150%);
+  -webkit-backdrop-filter: blur(var(--surface-blur)) saturate(150%);
   border: 1px solid var(--surface-border);
   border-radius: 16px;
   box-shadow: var(--shadow-md);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .glass-surface:hover {

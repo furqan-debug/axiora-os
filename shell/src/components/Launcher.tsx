@@ -10,6 +10,7 @@ import {
   Music,
   Search
 } from 'lucide-react';
+import { useWindowManager } from './WindowManagerProvider';
 import './Launcher.css';
 
 const INSTALLED_APPS = [
@@ -26,6 +27,7 @@ const INSTALLED_APPS = [
 export const Launcher: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
+  const { openApp } = useWindowManager();
 
   useEffect(() => {
     // Focus input on mount
@@ -57,7 +59,14 @@ export const Launcher: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           {filteredApps.length > 0 ? (
             <div className="app-grid">
               {filteredApps.map(app => (
-                <button key={app.id} className="app-card">
+                <button 
+                  key={app.id} 
+                  className="app-card"
+                  onClick={() => {
+                    openApp(app.id, app.name);
+                    onClose();
+                  }}
+                >
                   <div className="app-icon">{app.icon}</div>
                   <span className="app-name">{app.name}</span>
                 </button>
