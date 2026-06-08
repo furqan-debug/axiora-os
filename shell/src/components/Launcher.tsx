@@ -1,19 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { 
+  Globe, 
+  TerminalSquare, 
+  Folder, 
+  Settings, 
+  StickyNote, 
+  Calculator, 
+  Calendar, 
+  Music,
+  Search
+} from 'lucide-react';
 import './Launcher.css';
 
 const INSTALLED_APPS = [
-  { id: 'browser', name: 'Browser', icon: '🌐' },
-  { id: 'terminal', name: 'Terminal', icon: '💻' },
-  { id: 'files', name: 'Files', icon: '📁' },
-  { id: 'settings', name: 'Settings', icon: '⚙️' },
-  { id: 'notes', name: 'Notes', icon: '📝' },
-  { id: 'calculator', name: 'Calculator', icon: '🧮' },
-  { id: 'calendar', name: 'Calendar', icon: '📅' },
-  { id: 'music', name: 'Music', icon: '🎵' },
+  { id: 'browser', name: 'Browser', icon: <Globe size={40} strokeWidth={1.5} /> },
+  { id: 'terminal', name: 'Terminal', icon: <TerminalSquare size={40} strokeWidth={1.5} /> },
+  { id: 'files', name: 'Files', icon: <Folder size={40} strokeWidth={1.5} /> },
+  { id: 'settings', name: 'Settings', icon: <Settings size={40} strokeWidth={1.5} /> },
+  { id: 'notes', name: 'Notes', icon: <StickyNote size={40} strokeWidth={1.5} /> },
+  { id: 'calculator', name: 'Calculator', icon: <Calculator size={40} strokeWidth={1.5} /> },
+  { id: 'calendar', name: 'Calendar', icon: <Calendar size={40} strokeWidth={1.5} /> },
+  { id: 'music', name: 'Music', icon: <Music size={40} strokeWidth={1.5} /> },
 ];
 
 export const Launcher: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const [searchQuery, setSearchQuery] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    // Focus input on mount
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, []);
 
   const filteredApps = INSTALLED_APPS.filter(app => 
     app.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -21,24 +40,35 @@ export const Launcher: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
   return (
     <div className="launcher-overlay" onClick={onClose}>
-      <div className="search-container" onClick={e => e.stopPropagation()}>
-        <input 
-          type="text" 
-          className="search-input"
-          placeholder="Search applications, files, and settings..."
-          value={searchQuery}
-          onChange={e => setSearchQuery(e.target.value)}
-          autoFocus
-        />
-      </div>
-      
-      <div className="app-grid" onClick={e => e.stopPropagation()}>
-        {filteredApps.map(app => (
-          <button key={app.id} className="app-card">
-            <span className="app-icon">{app.icon}</span>
-            <span className="app-name">{app.name}</span>
-          </button>
-        ))}
+      <div className="launcher-content" onClick={e => e.stopPropagation()}>
+        <div className="search-container">
+          <Search className="search-icon" size={20} strokeWidth={2} />
+          <input 
+            ref={inputRef}
+            type="text" 
+            className="search-input"
+            placeholder="Search applications, files, and settings..."
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
+          />
+        </div>
+        
+        <div className="app-grid-container">
+          {filteredApps.length > 0 ? (
+            <div className="app-grid">
+              {filteredApps.map(app => (
+                <button key={app.id} className="app-card">
+                  <div className="app-icon">{app.icon}</div>
+                  <span className="app-name">{app.name}</span>
+                </button>
+              ))}
+            </div>
+          ) : (
+            <div className="no-results">
+              <p>No results found for "{searchQuery}"</p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

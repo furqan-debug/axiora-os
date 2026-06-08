@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { FolderPlus, FilePlus, Image as ImageIcon, Settings, TerminalSquare } from 'lucide-react';
 import './ContextMenu.css';
 
 interface ContextMenuProps {
@@ -32,28 +33,37 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, onClose, onOpenS
     };
   }, [onClose]);
 
+  // Ensure menu doesn't go off-screen
+  const adjustedX = Math.min(x, window.innerWidth - 220);
+  const adjustedY = Math.min(y, window.innerHeight - 250);
+
   return (
     <div 
       ref={menuRef}
-      className="context-menu" 
-      style={{ left: x, top: y }}
+      className="context-menu glass-surface" 
+      style={{ left: adjustedX, top: adjustedY }}
     >
-      <div className="context-menu-item">
-        <span>📁</span> New Folder
+      <div className="context-menu-item" onClick={onClose}>
+        <FolderPlus size={16} strokeWidth={1.5} className="context-menu-icon" />
+        <span>New Folder</span>
       </div>
-      <div className="context-menu-item">
-        <span>📄</span> New Document
+      <div className="context-menu-item" onClick={onClose}>
+        <FilePlus size={16} strokeWidth={1.5} className="context-menu-icon" />
+        <span>New Document</span>
       </div>
       <div className="context-menu-divider" />
-      <div className="context-menu-item">
-        <span>🖼️</span> Change Background
+      <div className="context-menu-item" onClick={onClose}>
+        <ImageIcon size={16} strokeWidth={1.5} className="context-menu-icon" />
+        <span>Change Background</span>
       </div>
       <div className="context-menu-item" onClick={() => { onClose(); onOpenSettings(); }}>
-        <span>⚙️</span> Display Settings
+        <Settings size={16} strokeWidth={1.5} className="context-menu-icon" />
+        <span>Display Settings</span>
       </div>
       <div className="context-menu-divider" />
-      <div className="context-menu-item">
-        <span>💻</span> Open Terminal
+      <div className="context-menu-item" onClick={onClose}>
+        <TerminalSquare size={16} strokeWidth={1.5} className="context-menu-icon" />
+        <span>Open Terminal</span>
       </div>
     </div>
   );

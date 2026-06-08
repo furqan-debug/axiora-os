@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { invoke } from '@tauri-apps/api/core';
+import { Sparkles, Palette, ShieldCheck, ChevronRight, ChevronLeft } from 'lucide-react';
 import './Welcome.css';
 
 const ACCENT_COLORS = [
@@ -45,29 +46,35 @@ export const Welcome: React.FC<WelcomeProps> = ({ onComplete }) => {
 
   return (
     <div className="welcome-overlay">
-      <div className="wizard-card">
+      <div className="wizard-card glass-surface">
 
         {/* ── Step 0: Welcome ─────────────────────────────────── */}
         {step === 0 && (
-          <>
+          <div className="wizard-step-content animation-slide-up">
             <div className="wizard-header">
-              <div className="wizard-logo">✦</div>
+              <div className="wizard-icon-container">
+                <Sparkles size={48} strokeWidth={1.5} color="var(--accent-color)" />
+              </div>
               <h1>Welcome to Axiora OS</h1>
               <p>A modern, fast, and beautiful desktop experience.<br />Let's get you set up in under a minute.</p>
             </div>
-            <div className="wizard-body" style={{ textAlign: 'center', paddingTop: '8px' }}>
-              <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.85rem' }}>
-                Axiora OS 0.1.0 "Vega" · Built on Ubuntu 22.04 LTS
-              </p>
+            <div className="wizard-body center-content">
+              <div className="system-info-badge">
+                <span>Axiora OS 0.1.0 "Vega"</span>
+                <span className="dot-separator">•</span>
+                <span>Ubuntu 22.04 LTS Core</span>
+              </div>
             </div>
-          </>
+          </div>
         )}
 
         {/* ── Step 1: Accent colour ────────────────────────────── */}
         {step === 1 && (
-          <>
+          <div className="wizard-step-content animation-slide-up">
             <div className="wizard-header">
-              <div className="wizard-logo">🎨</div>
+              <div className="wizard-icon-container">
+                <Palette size={48} strokeWidth={1.5} color="var(--accent-color)" />
+              </div>
               <h1>Choose your accent color</h1>
               <p>This color will be used across the dock, notifications, and quick settings.</p>
             </div>
@@ -80,25 +87,29 @@ export const Welcome: React.FC<WelcomeProps> = ({ onComplete }) => {
                     style={{ background: c.hex }}
                     title={c.label}
                     onClick={() => handleColorSelect(c.key)}
-                  />
+                  >
+                    {selectedColor === c.key && <div className="color-swatch-inner" />}
+                  </button>
                 ))}
               </div>
-              <p style={{ textAlign: 'center', color: 'rgba(255,255,255,0.45)', fontSize: '0.85rem', marginTop: '8px' }}>
+              <p className="selected-color-label">
                 {ACCENT_COLORS.find(c => c.key === selectedColor)?.label}
               </p>
             </div>
-          </>
+          </div>
         )}
 
         {/* ── Step 2: Privacy ──────────────────────────────────── */}
         {step === 2 && (
-          <>
+          <div className="wizard-step-content animation-slide-up">
             <div className="wizard-header">
-              <div className="wizard-logo">🔒</div>
+              <div className="wizard-icon-container">
+                <ShieldCheck size={48} strokeWidth={1.5} color="var(--accent-color)" />
+              </div>
               <h1>Privacy settings</h1>
               <p>Axiora OS respects your privacy. Nothing is shared without your consent.</p>
             </div>
-            <div className="wizard-body">
+            <div className="wizard-body privacy-body">
               {[
                 {
                   key: 'crashReports',
@@ -111,8 +122,8 @@ export const Welcome: React.FC<WelcomeProps> = ({ onComplete }) => {
                   desc: 'Share anonymous feature usage data to guide future development.',
                 },
               ].map(item => (
-                <div className="toggle-row" key={item.key}>
-                  <div className="toggle-label">
+                <div className="privacy-toggle-row" key={item.key}>
+                  <div className="privacy-label">
                     <h4>{item.title}</h4>
                     <p>{item.desc}</p>
                   </div>
@@ -124,7 +135,7 @@ export const Welcome: React.FC<WelcomeProps> = ({ onComplete }) => {
                 </div>
               ))}
             </div>
-          </>
+          </div>
         )}
 
         {/* ── Footer ───────────────────────────────────────────── */}
@@ -136,15 +147,20 @@ export const Welcome: React.FC<WelcomeProps> = ({ onComplete }) => {
           </div>
           <div className="wizard-nav">
             {step > 0 && (
-              <button className="btn-secondary" onClick={back}>Back</button>
+              <button className="btn-secondary" onClick={back}>
+                <ChevronLeft size={18} />
+                Back
+              </button>
             )}
             {step < TOTAL_STEPS - 1 ? (
               <button className="btn-primary" onClick={next}>
-                {step === 0 ? 'Get Started' : 'Next'}
+                {step === 0 ? 'Get Started' : 'Continue'}
+                {step > 0 && <ChevronRight size={18} />}
               </button>
             ) : (
-              <button className="btn-primary" onClick={handleFinish}>
-                Start Exploring ✦
+              <button className="btn-primary start-exploring" onClick={handleFinish}>
+                Start Exploring
+                <Sparkles size={16} style={{marginLeft: '8px'}} />
               </button>
             )}
           </div>

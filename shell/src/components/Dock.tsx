@@ -1,11 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { invoke } from '@tauri-apps/api/core';
+import { 
+  LayoutGrid, 
+  Folder, 
+  Globe, 
+  TerminalSquare, 
+  Settings, 
+  Wifi, 
+  BatteryMedium 
+} from 'lucide-react';
 import './Dock.css';
 
 interface AppItem {
   id: string;
   name: string;
-  icon: string;
+  icon: React.ReactNode;
   isRunning: boolean;
 }
 
@@ -15,17 +24,18 @@ interface DockProps {
 }
 
 const PINNED_APPS = [
-  { id: 'launcher', name: 'Launcher', icon: '🚀' },
-  { id: 'files', name: 'Files', icon: '📁' },
-  { id: 'browser', name: 'Browser', icon: '🌐' },
-  { id: 'terminal', name: 'Terminal', icon: '💻' },
-  { id: 'settings', name: 'Settings', icon: '⚙️' },
+  { id: 'launcher', name: 'Launcher', icon: <LayoutGrid size={24} strokeWidth={1.5} /> },
+  { id: 'files', name: 'Files', icon: <Folder size={24} strokeWidth={1.5} /> },
+  { id: 'browser', name: 'Browser', icon: <Globe size={24} strokeWidth={1.5} /> },
+  { id: 'terminal', name: 'Terminal', icon: <TerminalSquare size={24} strokeWidth={1.5} /> },
+  { id: 'settings', name: 'Settings', icon: <Settings size={24} strokeWidth={1.5} /> },
 ];
 
 export const Dock: React.FC<DockProps> = ({ onOpenSettings, onOpenLauncher }) => {
   const [time, setTime] = useState(new Date());
   const [systemStats, setSystemStats] = useState('RAM: Loading...');
   const [runningApps, setRunningApps] = useState<AppItem[]>([]);
+  const [hoveredApp, setHoveredApp] = useState<string | null>(null);
 
   useEffect(() => {
     const timer = setInterval(() => setTime(new Date()), 60000);
@@ -70,31 +80,44 @@ export const Dock: React.FC<DockProps> = ({ onOpenSettings, onOpenLauncher }) =>
   });
 
   return (
-    <div className="dock-container">
+    <div className="dock-container glass-surface">
       {mergedApps.map((app) => (
-        <button 
-          key={app.id} 
-          className="dock-item" 
-          title={app.name}
-          onClick={() => {
-            if (app.id === 'settings' && onOpenSettings) onOpenSettings();
-            if (app.id === 'launcher' && onOpenLauncher) onOpenLauncher();
-          }}
-        >
-          <span className="dock-item-icon">{app.icon}</span>
-          {app.isRunning && <div className="dock-item-indicator" />}
-        </button>
+        <div className="dock-item-wrapper" key={app.id}>
+          <button 
+            className={`dock-item ${hoveredApp === app.id ? 'hovered' : ''}`}
+            onMouseEnter={() => setHoveredApp(app.id)}
+            onMouseLeave={() => setHoveredApp(null)}
+            onClick={() => {
+              if (app.id === 'settings' && onOpenSettings) onOpenSettings();
+              if (app.id === 'launcher' && onOpenLauncher) onOpenLauncher();
+            }}
+          >
+            <span className="dock-item-icon">{app.icon}</span>
+            {app.isRunning && <div className="dock-item-indicator" />}
+          </button>
+          
+          {hoveredApp === app.id && (
+            <div className="dock-tooltip">
+              {app.name}
+            </div>
+          )}
+        </div>
       ))}
       <div className="dock-divider" />
       <div className="system-tray">
-        <span title={systemStats} style={{fontSize: '11px', color: '#ccc', marginRight: '8px'}}>{systemStats}</span>
-        <span title="Wi-Fi">📶</span>
-        <span title="Battery 85%">🔋</span>
-        <span>
+        <div className="tray-item stats-item" title={systemStats}>
+          <span>{systemStats}</span>
+        </div>
+        <div className="tray-item" title="Wi-Fi">
+          <Wifi size={16} strokeWidth={2} />
+        </div>
+        <div className="tray-item" title="Battery 85%">
+          <BatteryMedium size={18} strokeWidth={2} />
+        </div>
+        <div className="tray-item time-display">
           {time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-        </span>
+        </div>
       </div>
     </div>
   );
 };
-
