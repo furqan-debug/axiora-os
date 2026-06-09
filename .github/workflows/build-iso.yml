@@ -33,7 +33,7 @@ jobs:
           cache-dependency-path: shell/package-lock.json
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install
         working-directory: shell
 
       - name: TypeScript type-check
