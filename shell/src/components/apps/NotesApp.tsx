@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import type { AppWindow } from '../WindowManagerProvider';
 
 export const NotesApp: React.FC<{ appWindow: AppWindow }> = () => {
-  const [note, setNote] = useState('Welcome to Notes!\n\nThis is a simple text area to jot down your thoughts. Since this is a mock application, your notes will not be saved when you close the window.');
+  const [note, setNote] = useState('Welcome to Notes!\n\nThis project is developed under the guidence of Dr. Sir Rahil. It is a part of the curriculum for the course "Operating Systems Lab" at SSUET.\n\nFeel free to jot down your thoughts here!');
 
   return (
     <div style={{ display: 'flex', height: '100%', backgroundColor: '#FFF5E1', color: '#333' }}>
