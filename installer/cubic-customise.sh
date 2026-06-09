@@ -71,7 +71,10 @@ DEBIAN_FRONTEND=noninteractive apt-get remove -y -qq \
     ubuntu-session \
     ubuntu-desktop \
     ubuntu-desktop-minimal \
+    ubuntu-settings \
     ubuntu-web-launchers \
+    gnome-shell-extension-ubuntu-dock \
+    gnome-shell-extension-desktop-icons-ng \
     aisleriot \
     gnome-mahjongg \
     gnome-mines \
@@ -169,6 +172,13 @@ SUPPORT_URL="https://axiora.os/support"
 BUG_REPORT_URL="https://github.com/axiora-os/axiora/issues"
 LOGO=axiora-logo
 OSRELEASE
+
+cat > /etc/lsb-release <<'LSBRELEASE'
+DISTRIB_ID=Axiora
+DISTRIB_RELEASE=0.1.0
+DISTRIB_CODENAME=vega
+DISTRIB_DESCRIPTION="Axiora OS 0.1.0 (Vega)"
+LSBRELEASE
 
 cat > /etc/axiora-release <<'AXRELEASE'
 Axiora OS 0.1.0 "Vega"
