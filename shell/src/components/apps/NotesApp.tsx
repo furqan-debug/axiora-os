@@ -1,8 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { AppWindow } from '../WindowManagerProvider';
+import { invoke } from '@tauri-apps/api/core';
 
 export const NotesApp: React.FC<{ appWindow: AppWindow }> = () => {
-  const [note, setNote] = useState('Welcome to Notes!\n\nThis project is developed under the guidence of Dr. Sir Rahil. It is a part of the curriculum for the course "Operating Systems Lab" at SSUET.\n\nFeel free to jot down your thoughts here!');
+  const [note, setNote] = useState('Loading...');
+
+  useEffect(() => {
+    const loadNote = async () => {
+      try {
+        const savedNote: string = await invoke('read_note');
+        setNote(savedNote);
+      } catch (e) {
+        setNote('Failed to load note.');
+      }
+    };
+    loadNote();
+  }, []);
+
+  const handleChange = async (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const val = e.target.value;
+    setNote(val);
+    try {
+      await invoke('write_note', { content: val });
+    } catch (err) {
+      console.error('Failed to save note:', err);
+    }
+  };
 
   return (
     <div style={{ display: 'flex', height: '100%', backgroundColor: '#FFF5E1', color: '#333' }}>
@@ -15,7 +38,7 @@ export const NotesApp: React.FC<{ appWindow: AppWindow }> = () => {
       <div style={{ flex: 1, padding: '24px' }}>
         <textarea 
           value={note}
-          onChange={e => setNote(e.target.value)}
+          onChange={handleChange}
           style={{ width: '100%', height: '100%', border: 'none', background: 'transparent', resize: 'none', outline: 'none', fontSize: '16px', lineHeight: 1.6, fontFamily: 'inherit', color: '#333' }}
         />
       </div>

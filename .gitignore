@@ -4,3 +4,6 @@ node_modules/
 build/
 /dist/
 .env
+target/
+shell/src-tauri/target/
+.DS_Store

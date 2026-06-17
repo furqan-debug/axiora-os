@@ -24,7 +24,7 @@ const INSTALLED_APPS = [
   { id: 'music', name: 'Music', icon: <Music size={40} strokeWidth={1.5} /> },
 ];
 
-export const Launcher: React.FC<{ onClose: () => void }> = ({ onClose }) => {
+export const Launcher: React.FC<{ onClose: () => void; onOpenSettings?: () => void }> = ({ onClose, onOpenSettings }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
   const { openApp } = useWindowManager();
@@ -63,7 +63,11 @@ export const Launcher: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                   key={app.id} 
                   className="app-card"
                   onClick={() => {
-                    openApp(app.id, app.name);
+                    if (app.id === 'settings' && onOpenSettings) {
+                      onOpenSettings();
+                    } else {
+                      openApp(app.id, app.name);
+                    }
                     onClose();
                   }}
                 >

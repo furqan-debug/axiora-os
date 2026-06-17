@@ -1,38 +1,49 @@
 :root {
-  /* Axiora Accent Colors */
-  --axiora-blue: #007AFF;
-  --axiora-purple: #AF52DE;
-  --emerald-green: #34C759;
-  --sunset-orange: #FF9500;
-  --crimson-red: #FF3B30;
-
-  /* Theme Defaults */
-  --accent-color: var(--axiora-blue);
-  --bg-color: transparent; /* Transparent for desktop shell */
-  --text-color: #FAFAFA;
-  --text-muted: rgba(250, 250, 250, 0.6);
-  --text-disabled: rgba(250, 250, 250, 0.3);
+  /* Axiora Premium HSL Palette */
+  --hue-primary: 220; /* Deep Blue base */
   
-  /* Elevated Glass Elements */
-  --surface-bg: linear-gradient(135deg, rgba(30, 30, 35, 0.65), rgba(15, 15, 20, 0.75));
-  --surface-border: rgba(255, 255, 255, 0.08);
-  --surface-border-hover: rgba(255, 255, 255, 0.15);
+  --axiora-blue: hsl(var(--hue-primary), 100%, 50%);
+  --axiora-purple: hsl(280, 85%, 60%);
+  --emerald-green: hsl(140, 75%, 50%);
+  --sunset-orange: hsl(35, 100%, 50%);
+  --crimson-red: hsl(0, 90%, 60%);
+
+  /* Theme Defaults (Dark Mode Base) */
+  --accent-color: var(--axiora-blue);
+  --bg-color: transparent;
+  
+  --text-primary: hsl(0, 0%, 98%);
+  --text-secondary: hsl(0, 0%, 75%);
+  --text-disabled: hsl(0, 0%, 45%);
+  
+  /* Fluid Glass Elements */
+  --surface-base: hsl(var(--hue-primary), 20%, 8%);
+  --surface-bg: hsla(var(--hue-primary), 20%, 8%, 0.65);
+  --surface-bg-hover: hsla(var(--hue-primary), 20%, 12%, 0.75);
+  --surface-border: hsla(0, 0%, 100%, 0.08);
+  --surface-border-hover: hsla(0, 0%, 100%, 0.15);
   --surface-blur: 40px;
   
-  --dock-bg: linear-gradient(180deg, rgba(20, 20, 25, 0.65), rgba(10, 10, 15, 0.75));
-  --dock-border: rgba(255, 255, 255, 0.12);
+  --dock-bg: hsla(var(--hue-primary), 20%, 6%, 0.7);
+  --dock-border: hsla(0, 0%, 100%, 0.1);
 
-  /* Depth Shadows */
-  --shadow-sm: 0 4px 16px rgba(0, 0, 0, 0.2), inset 0 1px 1px rgba(255, 255, 255, 0.05);
-  --shadow-md: 0 12px 32px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.08);
-  --shadow-lg: 0 24px 64px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.05), inset 0 1px 1px rgba(255, 255, 255, 0.12);
+  /* Deep layered drop shadows */
+  --shadow-sm: 0 4px 16px hsla(0, 0%, 0%, 0.3), inset 0 1px 1px hsla(0, 0%, 100%, 0.06);
+  --shadow-md: 0 12px 32px hsla(0, 0%, 0%, 0.5), inset 0 1px 1px hsla(0, 0%, 100%, 0.08);
+  --shadow-lg: 0 24px 64px hsla(0, 0%, 0%, 0.7), 0 0 0 1px hsla(0, 0%, 100%, 0.05), inset 0 1px 1px hsla(0, 0%, 100%, 0.12);
+  --shadow-glow: 0 0 20px hsla(var(--hue-primary), 100%, 50%, 0.3);
+
+  /* Animations */
+  --transition-fast: 0.15s cubic-bezier(0.2, 0.8, 0.2, 1);
+  --transition-smooth: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-bounce: 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
-  color: var(--text-color);
+  color-scheme: dark;
+  color: var(--text-primary);
   background-color: var(--bg-color);
 
   font-synthesis: none;
@@ -55,9 +66,10 @@ body {
   background-image: url('/wallpaper.png');
   background-size: cover;
   background-position: center;
+  background-color: #0f1115; /* Fallback */
 }
 
-/* Reusable Glass Surface Class */
+/* Premium Glass Surface */
 .glass-surface {
   background: var(--surface-bg);
   backdrop-filter: blur(var(--surface-blur)) saturate(150%);
@@ -65,7 +77,7 @@ body {
   border: 1px solid var(--surface-border);
   border-radius: 16px;
   box-shadow: var(--shadow-md);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: background var(--transition-smooth), border-color var(--transition-smooth), box-shadow var(--transition-smooth), transform var(--transition-smooth);
 }
 
 .glass-surface:hover {

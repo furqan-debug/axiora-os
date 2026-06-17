@@ -116,19 +116,10 @@ function Desktop() {
     >
       {!welcomeDone && <Welcome onComplete={() => setWelcomeDone(true)} />}
 
-      <div
-        style={{ position: 'absolute', top: 0, right: 0, width: '50px', height: '50px', cursor: 'pointer', zIndex: 1000 }}
-        onClick={() => setShowNotifications(!showNotifications)}
-        title="Toggle Notification Center"
+      <MenuBar 
+        onOpenLauncher={() => setShowLauncher(!showLauncher)}
+        onOpenNotifications={() => setShowNotifications(!showNotifications)}
       />
-
-      <div
-        style={{ position: 'absolute', top: '28px', left: 0, width: '50px', height: '50px', cursor: 'pointer', zIndex: 1000 }}
-        onClick={() => setShowLauncher(!showLauncher)}
-        title="Toggle Launcher"
-      />
-
-      <MenuBar />
 
       <div className="desktop-area" style={{ position: 'absolute', top: '28px', left: 0, right: 0, bottom: 0 }}>
         {/* Render the actual applications managed by WindowManager */}
@@ -136,7 +127,7 @@ function Desktop() {
       </div>
 
       {/* System Overlays */}
-      {showLauncher && <Launcher onClose={() => setShowLauncher(false)} />}
+      {showLauncher && <Launcher onClose={() => setShowLauncher(false)} onOpenSettings={() => setShowSettings(true)} />}
       {showNotifications && <NotificationCenter />}
       {showSettings && <Settings onClose={() => setShowSettings(false)} />}
       {showWorkspaces && <WorkspaceManager onClose={() => setShowWorkspaces(false)} />}

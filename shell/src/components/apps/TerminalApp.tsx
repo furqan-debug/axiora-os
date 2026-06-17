@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { invoke } from '@tauri-apps/api/core';
 import type { AppWindow } from '../WindowManagerProvider';
 
 export const TerminalApp: React.FC<{ appWindow: AppWindow }> = () => {
-  const [history, setHistory] = useState<string[]>(['Axiora OS v0.1.0', 'Type "help" for available commands.']);
+  const [history, setHistory] = useState<string[]>(['Axiora OS v0.1.0', 'Type commands to run them on your system.']);
   const [input, setInput] = useState('');
   const endRef = useRef<HTMLDivElement>(null);
 
@@ -10,28 +11,26 @@ export const TerminalApp: React.FC<{ appWindow: AppWindow }> = () => {
     endRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [history]);
 
-  const handleCommand = (e: React.KeyboardEvent) => {
+  const handleCommand = async (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       const cmd = input.trim();
-      let response = '';
+      if (!cmd) return;
       
-      switch (cmd.toLowerCase()) {
-        case 'help': response = 'Commands: help, clear, date, echo, ls, uname'; break;
-        case 'clear': setHistory([]); setInput(''); return;
-        case 'date': response = new Date().toString(); break;
-        case 'ls': response = 'Desktop Documents Downloads Music Pictures Public Templates Videos'; break;
-        case 'uname': response = 'Axiora-OS vega x86_64'; break;
-        case '': break;
-        default: 
-          if (cmd.startsWith('echo ')) {
-            response = cmd.slice(5);
-          } else {
-            response = `Command not found: ${cmd}`;
-          }
+      if (cmd.toLowerCase() === 'clear') {
+        setHistory([]);
+        setInput('');
+        return;
       }
-      
-      setHistory(prev => [...prev, `axiora@host:~$ ${cmd}`, ...(response ? [response] : [])]);
+
+      setHistory(prev => [...prev, `axiora@host:~$ ${cmd}`]);
       setInput('');
+
+      try {
+        const response: string = await invoke('execute_command', { cmd });
+        setHistory(prev => [...prev, response]);
+      } catch (err: any) {
+        setHistory(prev => [...prev, `Error: ${err}`]);
+      }
     }
   };
 

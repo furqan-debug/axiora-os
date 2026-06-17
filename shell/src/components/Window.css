@@ -2,19 +2,19 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  border-radius: 12px;
+  border-radius: 16px;
   background: var(--surface-bg);
   backdrop-filter: blur(var(--surface-blur)) saturate(150%);
   -webkit-backdrop-filter: blur(var(--surface-blur)) saturate(150%);
   border: 1px solid var(--surface-border);
-  box-shadow: var(--shadow-md);
+  box-shadow: var(--shadow-sm);
   animation: scaleInMenu 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-  transition: box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
+  transition: box-shadow var(--transition-smooth), border-color var(--transition-smooth);
 }
 
 .app-window.active {
   box-shadow: var(--shadow-lg);
-  border-color: rgba(255, 255, 255, 0.2);
+  border-color: var(--surface-border-hover);
 }
 
 .app-window.maximized {
@@ -37,12 +37,12 @@
 .window-titlebar {
   display: flex;
   align-items: center;
-  height: 38px;
-  min-height: 38px;
+  height: 44px;
+  min-height: 44px;
   padding: 0 16px;
   background: transparent;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.15);
+  border-bottom: 1px solid hsla(0, 0%, 100%, 0.05);
+  box-shadow: inset 0 1px 1px hsla(0, 0%, 100%, 0.1);
   cursor: grab;
   user-select: none;
 }
@@ -58,16 +58,17 @@
 }
 
 .control-btn {
-  width: 12px;
-  height: 12px;
+  width: 13px;
+  height: 13px;
   border-radius: 50%;
-  border: 1px solid rgba(0,0,0,0.1);
-  box-shadow: inset 0 1px 1px rgba(255,255,255,0.2);
+  border: 1px solid hsla(0,0%,0%,0.15);
+  box-shadow: inset 0 1px 1px hsla(0,0%,100%,0.3);
   cursor: pointer;
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: background var(--transition-fast);
 }
 
 .control-btn.close { background: #FF5F56; }
@@ -76,12 +77,12 @@
 
 .control-btn::after {
   position: absolute;
-  color: rgba(0,0,0,0.6);
+  color: hsla(0,0%,0%,0.6);
   font-size: 10px;
   font-weight: 800;
   line-height: 1;
   opacity: 0;
-  transition: opacity 0.2s ease;
+  transition: opacity var(--transition-fast);
 }
 
 .window-controls:hover .control-btn::after {
@@ -95,9 +96,9 @@
 .window-title {
   flex: 1;
   text-align: center;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
-  color: var(--text-color);
+  color: var(--text-primary);
   letter-spacing: 0.3px;
   padding-right: 60px; /* offset the controls to center the text perfectly */
 }
@@ -107,6 +108,10 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  background: rgba(0, 0, 0, 0.3);
-  box-shadow: inset 0 8px 16px rgba(0, 0, 0, 0.3);
+  background: hsla(0, 0%, 0%, 0.4);
+  box-shadow: inset 0 8px 16px hsla(0, 0%, 0%, 0.3);
+}
+
+.app-window.dragging .window-body {
+  pointer-events: none;
 }

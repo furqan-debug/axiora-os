@@ -45,6 +45,7 @@ export const Settings: React.FC<SettingsProps> = ({ onClose }) => {
     const newVal = !dockAutohide;
     setDockAutohide(newVal);
     localStorage.setItem('axiora-dock-autohide', String(newVal));
+    window.dispatchEvent(new Event('axiora-settings-changed'));
   };
 
   return (

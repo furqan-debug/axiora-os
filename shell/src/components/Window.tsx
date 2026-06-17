@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Rnd } from 'react-rnd';
 import { useWindowManager } from './WindowManagerProvider';
 import type { AppWindow } from './WindowManagerProvider';
@@ -18,6 +18,7 @@ export const Window: React.FC<WindowProps> = ({
   defaultHeight = 600
 }) => {
   const { activeWindowId, focusWindow, closeWindow, minimizeWindow, maximizeWindow } = useWindowManager();
+  const [isDragging, setIsDragging] = useState(false);
   
   if (appWindow.isMinimized) return null;
 
@@ -36,15 +37,23 @@ export const Window: React.FC<WindowProps> = ({
       bounds="parent"
       dragHandleClassName="window-titlebar"
       onDragStart={() => {
+        setIsDragging(true);
         if (!isActive) focusWindow(appWindow.id);
       }}
+      onDragStop={() => {
+        setIsDragging(false);
+      }}
       onResizeStart={() => {
+        setIsDragging(true);
         if (!isActive) focusWindow(appWindow.id);
+      }}
+      onResizeStop={() => {
+        setIsDragging(false);
       }}
       style={{ zIndex: appWindow.zIndex }}
       disableDragging={appWindow.isMaximized}
       enableResizing={!appWindow.isMaximized}
-      className={`app-window ${isActive ? 'active' : ''} ${appWindow.isMaximized ? 'maximized' : ''}`}
+      className={`app-window ${isActive ? 'active' : ''} ${appWindow.isMaximized ? 'maximized' : ''} ${isDragging ? 'dragging' : ''}`}
     >
       <div 
         className="window-content-wrapper" 

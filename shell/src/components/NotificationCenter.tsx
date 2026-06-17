@@ -55,6 +55,30 @@ export const NotificationCenter: React.FC = () => {
     }
   };
 
+  const handleWifi = async () => {
+    try {
+      await invoke('toggle_wifi', { state: !wifi });
+      setWifi(!wifi);
+    } catch {
+      setWifi(!wifi); // Fallback
+    }
+  };
+
+  const handleBluetooth = async () => {
+    try {
+      await invoke('toggle_bluetooth', { state: !bluetooth });
+      setBluetooth(!bluetooth);
+    } catch {
+      setBluetooth(!bluetooth); // Fallback
+    }
+  };
+
+  const handleTheme = () => {
+    const newTheme = theme === 'dark' ? 'light' : 'dark';
+    setTheme(newTheme);
+    document.documentElement.setAttribute('data-theme', newTheme);
+  };
+
   const removeNotification = (id: string) => {
     setNotifications(prev => prev.filter(n => n.id !== id));
   };
@@ -64,7 +88,7 @@ export const NotificationCenter: React.FC = () => {
       <div className="quick-settings">
         <button 
           className={`qs-toggle ${wifi ? 'active' : ''}`}
-          onClick={() => setWifi(!wifi)}
+          onClick={handleWifi}
         >
           <div className="qs-icon-wrapper">
             <Wifi size={20} strokeWidth={2} />
@@ -73,7 +97,7 @@ export const NotificationCenter: React.FC = () => {
         </button>
         <button 
           className={`qs-toggle ${bluetooth ? 'active' : ''}`}
-          onClick={() => setBluetooth(!bluetooth)}
+          onClick={handleBluetooth}
         >
           <div className="qs-icon-wrapper">
             <Bluetooth size={20} strokeWidth={2} />
@@ -82,7 +106,7 @@ export const NotificationCenter: React.FC = () => {
         </button>
         <button 
           className="qs-toggle"
-          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+          onClick={handleTheme}
         >
           <div className="qs-icon-wrapper">
             {theme === 'dark' ? <Moon size={20} strokeWidth={2} /> : <Sun size={20} strokeWidth={2} />}

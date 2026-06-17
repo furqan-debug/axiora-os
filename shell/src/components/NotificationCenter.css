@@ -25,56 +25,58 @@
 .quick-settings {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: 16px;
   padding: 24px 20px 20px 20px;
-  border-bottom: 1px solid var(--surface-border);
-  background: rgba(0, 0, 0, 0.1);
+  border-bottom: 1px solid hsla(0, 0%, 100%, 0.05);
+  background: hsla(0, 0%, 0%, 0.2);
 }
 
 .qs-toggle {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px;
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  color: var(--text-color);
+  padding: 12px;
+  border-radius: 20px;
+  background: hsla(0, 0%, 100%, 0.05);
+  border: 1px solid hsla(0, 0%, 100%, 0.03);
+  color: var(--text-primary);
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all var(--transition-bounce);
   font-weight: 500;
   font-size: 14px;
 }
 
 .qs-toggle:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.1);
-  transform: translateY(-2px);
+  background: hsla(0, 0%, 100%, 0.1);
+  border-color: hsla(0, 0%, 100%, 0.1);
+  transform: translateY(-2px) scale(1.02);
 }
 
 .qs-toggle:active {
-  transform: translateY(0);
+  transform: translateY(0) scale(0.98);
 }
 
 .qs-toggle.active {
   background: var(--accent-color);
   color: white;
   border-color: transparent;
-  box-shadow: 0 4px 12px rgba(var(--accent-color), 0.3);
+  box-shadow: 0 8px 24px hsla(var(--hue-primary), 100%, 50%, 0.4), inset 0 1px 1px hsla(0,0%,100%,0.3);
 }
 
 .qs-icon-wrapper {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 12px;
-  background: rgba(0, 0, 0, 0.2);
+  width: 40px;
+  height: 40px;
+  border-radius: 14px;
+  background: hsla(0, 0%, 0%, 0.3);
+  transition: all var(--transition-fast);
 }
 
 .qs-toggle.active .qs-icon-wrapper {
-  background: rgba(255, 255, 255, 0.2);
+  background: hsla(0, 0%, 100%, 0.25);
+  box-shadow: 0 4px 12px hsla(0,0%,0%,0.2);
 }
 
 .notifications-list {

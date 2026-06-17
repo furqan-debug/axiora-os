@@ -9,8 +9,6 @@ import {
 import { useWindowManager } from './WindowManagerProvider';
 import './Dock.css';
 
-
-
 interface DockProps {
   onOpenSettings?: () => void;
   onOpenLauncher?: () => void;
@@ -30,6 +28,18 @@ export const Dock: React.FC<DockProps> = ({ onOpenSettings, onOpenLauncher }) =>
 
   const [hoveredApp, setHoveredApp] = useState<string | null>(null);
   const [dockContextMenu, setDockContextMenu] = useState<{appId: string, x: number, y: number, isRunning: boolean} | null>(null);
+  
+  // Auto-hide feature
+  const [isAutoHide, setIsAutoHide] = useState(() => localStorage.getItem('axiora-dock-autohide') === 'true');
+  const [isRevealed, setIsRevealed] = useState(false);
+
+  useEffect(() => {
+    const handleSettingsChanged = () => {
+      setIsAutoHide(localStorage.getItem('axiora-dock-autohide') === 'true');
+    };
+    window.addEventListener('axiora-settings-changed', handleSettingsChanged);
+    return () => window.removeEventListener('axiora-settings-changed', handleSettingsChanged);
+  }, []);
 
   // Close context menu on outside click
   useEffect(() => {
@@ -44,7 +54,11 @@ export const Dock: React.FC<DockProps> = ({ onOpenSettings, onOpenLauncher }) =>
   });
 
   return (
-    <div className="dock-container glass-surface">
+    <div 
+      className={`dock-container glass-surface ${isAutoHide ? 'autohide' : ''} ${isRevealed ? 'revealed' : ''}`}
+      onMouseEnter={() => setIsRevealed(true)}
+      onMouseLeave={() => setIsRevealed(false)}
+    >
       {mergedApps.map((app) => (
         <div 
           className="dock-item-wrapper" 
