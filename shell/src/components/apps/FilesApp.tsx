@@ -69,8 +69,19 @@ export const FilesApp: React.FC<{ appWindow: AppWindow }> = () => {
             {files.map(f => (
               <div 
                 key={f.name} 
-                onDoubleClick={() => f.is_dir && setCurrentPath(currentPath.endsWith('/') ? `${currentPath}${f.name}` : `${currentPath}/${f.name}`)}
-                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', cursor: f.is_dir ? 'pointer' : 'default', padding: '8px', borderRadius: '8px' }}
+                onDoubleClick={async () => {
+                  if (f.is_dir) {
+                    setCurrentPath(currentPath.endsWith('/') ? `${currentPath}${f.name}` : `${currentPath}/${f.name}`);
+                  } else {
+                    const filePath = currentPath.endsWith('/') ? `${currentPath}${f.name}` : `${currentPath}/${f.name}`;
+                    try {
+                      await invoke('open_file', { path: filePath });
+                    } catch (e) {
+                      console.error('Failed to open file:', e);
+                    }
+                  }
+                }}
+                style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', cursor: 'pointer', padding: '8px', borderRadius: '8px' }}
               >
                 {getIcon(f.name, f.is_dir)}
                 <span style={{ fontSize: '13px', wordBreak: 'break-all', textAlign: 'center' }}>{f.name}</span>

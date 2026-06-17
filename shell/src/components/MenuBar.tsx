@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { invoke } from '@tauri-apps/api/core';
-import { Wifi, BatteryMedium, Apple } from 'lucide-react';
+import { Wifi, BatteryMedium, ChevronRight, Check } from 'lucide-react';
 import { useWindowManager } from './WindowManagerProvider';
 import './MenuBar.css';
 
@@ -60,8 +60,8 @@ export const MenuBar: React.FC<MenuBarProps> = ({ onOpenNotifications, onOpenLau
   return (
     <div className="menu-bar">
       <div className="menu-bar-left">
-        <div className="menu-item apple-logo" onClick={onOpenLauncher} style={{ cursor: 'pointer' }}>
-          <Apple size={16} fill="currentColor" />
+        <div className="menu-item apple-logo" onClick={onOpenLauncher} style={{ cursor: 'pointer', padding: '0 8px' }}>
+          <img src="/favicon.svg" alt="Axiora OS" style={{ width: 16, height: 16, filter: 'drop-shadow(0 0 2px rgba(255,255,255,0.3))' }} />
         </div>
         <div className="menu-item active-app-name">
           {activeAppName}

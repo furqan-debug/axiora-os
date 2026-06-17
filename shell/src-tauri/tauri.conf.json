@@ -12,15 +12,14 @@
   "app": {
     "windows": [
       {
-        "title": "Axiora Shell",
+        "title": "Axiora OS",
         "width": 1920,
         "height": 1080,
         "resizable": true,
         "fullscreen": false,
         "transparent": true,
         "decorations": false,
-        "alwaysOnTop": true,
-        "skipTaskbar": true
+        "alwaysOnTop": true
       }
     ],
     "security": {
@@ -29,6 +28,13 @@
   },
   "bundle": {
     "active": true,
-    "targets": "all"
+    "targets": "all",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ]
   }
 }

@@ -98,11 +98,19 @@ struct FileEntry {
 
 #[tauri::command]
 fn execute_command(cmd: String) -> Result<String, String> {
-    let output = std::process::Command::new("bash")
-        .arg("-c")
-        .arg(cmd)
-        .output()
-        .map_err(|e| e.to_string())?;
+    #[cfg(target_os = "windows")]
+    let mut command = std::process::Command::new("powershell");
+    
+    #[cfg(target_os = "windows")]
+    command.arg("-Command").arg(&cmd);
+
+    #[cfg(not(target_os = "windows"))]
+    let mut command = std::process::Command::new("bash");
+    
+    #[cfg(not(target_os = "windows"))]
+    command.arg("-c").arg(&cmd);
+
+    let output = command.output().map_err(|e| e.to_string())?;
     
     if output.status.success() {
         Ok(String::from_utf8_lossy(&output.stdout).to_string())
@@ -130,21 +138,29 @@ fn list_directory(path: String) -> Result<Vec<FileEntry>, String> {
 
 #[tauri::command]
 fn toggle_wifi(state: bool) -> Result<(), String> {
-    let arg = if state { "on" } else { "off" };
-    std::process::Command::new("nmcli")
-        .args(&["radio", "wifi", arg])
-        .output()
-        .map_err(|e| e.to_string())?;
+    #[cfg(target_os = "linux")]
+    {
+        let arg = if state { "on" } else { "off" };
+        std::process::Command::new("nmcli")
+            .args(&["radio", "wifi", arg])
+            .output()
+            .map_err(|e| e.to_string())?;
+    }
+    // On Windows, silently succeed as netsh requires admin privileges
     Ok(())
 }
 
 #[tauri::command]
 fn toggle_bluetooth(state: bool) -> Result<(), String> {
-    let arg = if state { "unblock" } else { "block" };
-    std::process::Command::new("rfkill")
-        .args(&[arg, "bluetooth"])
-        .output()
-        .map_err(|e| e.to_string())?;
+    #[cfg(target_os = "linux")]
+    {
+        let arg = if state { "unblock" } else { "block" };
+        std::process::Command::new("rfkill")
+            .args(&[arg, "bluetooth"])
+            .output()
+            .map_err(|e| e.to_string())?;
+    }
+    // On Windows, silently succeed
     Ok(())
 }
 
@@ -163,6 +179,35 @@ fn write_note(content: String) -> Result<(), String> {
     std::fs::write(&path, content).map_err(|e| e.to_string())
 }
 
+#[tauri::command]
+fn open_file(path: String) -> Result<(), String> {
+    #[cfg(target_os = "windows")]
+    {
+        std::process::Command::new("cmd")
+            .arg("/C")
+            .arg("start")
+            .arg("")
+            .arg(&path)
+            .spawn()
+            .map_err(|e| e.to_string())?;
+    }
+    #[cfg(target_os = "macos")]
+    {
+        std::process::Command::new("open")
+            .arg(&path)
+            .spawn()
+            .map_err(|e| e.to_string())?;
+    }
+    #[cfg(target_os = "linux")]
+    {
+        std::process::Command::new("xdg-open")
+            .arg(&path)
+            .spawn()
+            .map_err(|e| e.to_string())?;
+    }
+    Ok(())
+}
+
 fn main() {
     tauri::Builder::default()
         .invoke_handler(tauri::generate_handler![
@@ -175,7 +220,8 @@ fn main() {
             toggle_wifi,
             toggle_bluetooth,
             read_note,
-            write_note
+            write_note,
+            open_file
         ])
         .run(tauri::generate_context!())
         .expect("error while running axiora-shell application");

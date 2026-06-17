@@ -17,6 +17,8 @@ import { FilesApp } from './components/apps/FilesApp';
 import { BrowserApp } from './components/apps/BrowserApp';
 import { CalculatorApp } from './components/apps/CalculatorApp';
 import { NotesApp } from './components/apps/NotesApp';
+import { CalendarApp } from './components/apps/CalendarApp';
+import { MusicApp } from './components/apps/MusicApp';
 
 const isFirstRun = !localStorage.getItem('axiora-welcome-done');
 
@@ -31,6 +33,8 @@ const DesktopWindows: React.FC = () => {
       case 'browser': return <BrowserApp appWindow={appWindow} />; 
       case 'calculator': return <CalculatorApp appWindow={appWindow} />; 
       case 'notes': return <NotesApp appWindow={appWindow} />; 
+      case 'calendar': return <CalendarApp appWindow={appWindow} />;
+      case 'music': return <MusicApp appWindow={appWindow} />;
       default: return <div style={{ padding: '20px', color: 'white' }}>App "{appWindow.appId}" not found.</div>;
     }
   };
@@ -41,6 +45,8 @@ const DesktopWindows: React.FC = () => {
       case 'browser': return { w: 1000, h: 700 };
       case 'calculator': return { w: 320, h: 500 };
       case 'notes': return { w: 600, h: 500 };
+      case 'calendar': return { w: 800, h: 600 };
+      case 'music': return { w: 800, h: 600 };
       default: return { w: 800, h: 600 };
     }
   };
